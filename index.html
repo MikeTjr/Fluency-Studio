@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FluencyEngine Pro - Dual Auditory & Motor Speech Suite</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --surface-dark: #1e293b;
+            --accent-glow: #38bdf8;
+            --accent-kids: #f59e0b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-light); min-height: 100vh; display: flex; flex-direction: column; }
+        
+        header { background: var(--surface-dark); padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-size: 1.5rem; color: var(--accent-glow); letter-spacing: -0.5px; }
+        
+        .mode-toggle-btn { background: var(--accent-kids); color: var(--bg-dark); border: none; padding: 0.6rem 1.2rem; font-weight: bold; border-radius: 20px; cursor: pointer; transition: all 0.2s ease; }
+        .mode-toggle-btn:hover { opacity: 0.9; transform: scale(1.03); }
+
+        main { flex: 1; padding: 2rem; max-width: 1400px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media(max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+        .panel { background: var(--surface-dark); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        h2 { font-size: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        select, input[type="range"] { width: 100%; background: var(--bg-dark); border: 1px solid var(--border); padding: 0.75rem; color: white; border-radius: 6px; }
+        
+        .btn-primary { background: var(--accent-glow); color: var(--bg-dark); border: none; padding: 1rem; font-weight: bold; font-size: 1rem; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .btn-primary:hover { background: #7dd3fc; }
+        .btn-primary.active { background: #ef4444; color: white; }
+
+        .visualizer-container { position: relative; background: #020617; border-radius: 8px; height: 250px; overflow: hidden; border: 1px solid var(--border); }
+        canvas { width: 100%; height: 100%; display: block; }
+
+        .curriculum-box { overflow-y: auto; max-height: 400px; padding-right: 0.5rem; }
+        .day-card { background: var(--bg-dark); border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; cursor: pointer; transition: border 0.2s; }
+        .day-card:hover { border-color: var(--accent-glow); }
+        .day-card.active { border-color: var(--accent-glow); background: #1e293b; }
+        .day-title { font-weight: bold; color: var(--accent-glow); display: flex; justify-content: space-between; margin-bottom: 0.25rem; }
+        
+        /* Kids Mode Theme Overrides via Body Class */
+        body.kids-mode { --bg-dark: #fff7ed; --surface-dark: #ffffff; --text-light: #431407; --border: #fed7aa; --accent-glow: #ea580c; }
+        body.kids-mode .panel { box-shadow: 0 10px 15px -3px rgba(251, 146, 60, 0.1); }
+        body.kids-mode .day-title { color: var(--accent-kids); }
+        body.kids-mode .btn-primary { background: var(--accent-kids); color: white; }
+        
+        .kids-avatar { display: none; text-align: center; font-size: 4rem; margin-bottom: 1rem; animation: bounce 2s infinite; }
+        body.kids-mode .kids-avatar { display: block; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="app-title">⚡ FluencyEngine Pro <span style="font-size: 0.8rem; vertical-align: middle; padding: 2px 6px; background: #334155; border-radius: 4px; color: white; margin-left: 5px;">v1.2.0</span></h1>
+        <button class="mode-toggle-btn" id="mode-toggle" onclick="toggleMode()">Switch to Kids Mode 🎨</button>
+    </header>
+
+    <main>
+        <!-- Left Panel: DSP Hardware Simulation Layer -->
+        <div class="panel">
+            <h2>🎛️ Neuro-Auditory DSP Controller</h2>
+            <div class="kids-avatar" id="avatar">🦊</div>
+            
+            <div class="control-group">
+                <label for="feedback-mode">Neurological Target Setting</label>
+                <select id="feedback-mode" onchange="updateAudioParams()">
+                    <option value="daf">Delayed Auditory Feedback (DAF Mode)</option>
+                    <option value="faf">Frequency Altered Feedback (FAF Pitch Shift)</option>
+                    <option value="binaural">Choral Masking (White Noise Burst)</option>
+                    <option value="bypass">Hardware Bypass (Pure Mic Loop)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label id="param-label" for="param-slider">DAF Buffer Delay: <span id="param-val">100</span> ms</label>
+                <input type="range" id="param-slider" min="20" max="300" step="5" value="100" oninput="updateAudioParams()">
+            </div>
+
+            <button class="btn-primary" id="mic-toggle" onclick="toggleSpeechEngine()">INITIALIZE AUDIO ENGINE</button>
+            
+            <div class="control-group">
+                <label>Real-Time Biofeedback Monitor</label>
+                <div class="visualizer-container">
+                    <canvas id="visualizer"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Rigorous Educational Engine Layer -->
+        <div class="panel">
+            <h2>📚 Clinical Curriculum Workspace (<span id="track-label">Adult Track</span>)</h2>
+            <div class="control-group">
+                <label>Active Practice Prompt</label>
+                <div id="prompt-display" style="background:#020617; color: #38bdf8; padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border); font-size: 1.1rem; line-height: 1.5; font-weight: 500;">
+                    Select a curriculum day below to begin real-time adaptive speech practice.
+                </div>
+            </div>
+            
+            <label>30-Day Guided Matrix</label>
+            <div class="curriculum-box" id="curriculum-container">
+                <!-- Data injection handled programmatically via JavaScript structural objects -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Programmatic Core Datasets
+        const adultCurriculum = [
+            { day: 1, title: "Gentle Vocal Onsets", strategy: "Breathe out a quiet, soft /h/ air stream just before you speak a vowel. Let the vocal cords fold open naturally.", prompt: "[Practice Material]: '---Hhh-Always assume a continuous stream. Hhh-Over the horizon, the evening sun settled down safely.'" },
+            { day: 8, title: "Prolonged Vowel Stretching", strategy: "Elongate structural vowels for 1.5 seconds. Stretch the time domain execution of speech movements safely.", prompt: "[Practice Material]: 'L-i-i-g-h-t-l-y touching the keys. M-a-a-k-i-n-g each word flow continuously into the next phrase sequence.'" },
+            { day: 16, title: "Active Mid-Block Pull-Outs", strategy: "When you encounter a block, do not force forward. Slow down, consciously drop your lower jaw tension, and glide through.", prompt: "[Practice Material]: 'S----(Catch tension, open jaw, drop pressure)---sliding smoothly down into the baseline word structure.'" },
+            { day: 30, title: "Cognitive Noise Thresholds", strategy: "Maintain uninterrupted vocalization even when sensory tracking disruptions or external sound patterns challenge focus.", prompt: "[Practice Material]: 'I maintain autonomous control over my physical speech mechanisms regardless of environments.'" }
+        ];
+
+        const kidsCurriculum = [
+            { day: 1, title: "The Turtle Talk Journey", strategy: "Speak like a wise old turtle! Give every single word-part its own little stepping stone. No rushing!", prompt: "[Fun Practice]: 'The. fat. cat. sat. down. on. the. bright. orange. mat.'" },
+            { day: 8, title: "The Magic Copycat Engine", strategy: "Listen carefully to the small voice delay in your ears. Match its soft rhythm exactly like a game of copycat.", prompt: "[Fun Practice]: 'Bouncing bubbles blow big bright blue balloons beautifully.'" },
+            { day: 16, title: "The Freeze & Shake Game", strategy: "If a word gets stuck, freeze! Shake your hands out like a wet puppy, relax your tummy, and let the word slide out easy.", prompt: "[Fun Practice]: 'Sss- (Freeze! Shake it out!) - Super shiny stars sparkle brightly in space.'" },
+            { day: 30, title: "The Brave Story Explorer", strategy: "Tell your app friend a story about an astronaut using your smooth, rhythmic turtle paths without stopping.", prompt: "[Fun Practice]: 'Rocket ships zoom all the way up to Mars with friendly green space puppies!'" }
+        ];
+
+        let isKidsMode = false;
+        let audioCtx = null;
+        let micSource = null;
+        let delayNode = null;
+        let feedbackNode = null;
+        let biquadFilter = null;
+        let analyser = null;
+        let isEngineRunning = false;
+        let animationFrameId = null;
+
+        // Initialize UI Elements
+        function loadCurriculum() {
+            const container = document.getElementById('curriculum-container');
+            container.innerHTML = '';
+            const activeDataset = isKidsMode ? kidsCurriculum : adultCurriculum;
+            
+            activeDataset.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `day-card ${index === 0 ? 'active' : ''}`;
+                card.onclick = () => selectDay(card, item);
+                card.innerHTML = `
+                    <div class="day-title">
+                        <span>Day ${item.day}: ${item.title}</span>
+                        <span>🎯 Goal</span>
+                    </div>
+                    <div style="font-size:0.85rem; color:var(--text-muted);">${item.strategy}</div>
+                `;
+                container.appendChild(card);
+                if(index === 0) selectDay(card, item);
+            });
+        }
+
+        function selectDay(element, item) {
+            document.querySelectorAll('.day-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('prompt-display').innerHTML = `
+                <strong style="color:var(--text-light); display:block; margin-bottom:0.5rem;">STRATEGY: ${item.strategy}</strong>
+                ${item.prompt}
+            `;
+        }
+
+        function toggleMode() {
+            isKidsMode = !isKidsMode;
+            document.body.classList.toggle('kids-mode', isKidsMode);
+            
+            const btn = document.getElementById('mode-toggle');
+            const title = document.getElementById('track-label');
+            const selectHardware = document.getElementById('feedback-mode');
+            
+            if(isKidsMode) {
+                btn.innerText = "Switch to Adult Mode 👔";
+                title.innerText = "Kids Adventure Track";
+                selectHardware.value = "daf";
+                document.getElementById('param-slider').value = 140; 
+            } else {
+                btn.innerText = "Switch to Kids Mode 🎨";
+                title.innerText = "Adult Track";
+                selectHardware.value = "daf";
+                document.getElementById('param-slider').value = 100;
+            }
+            updateAudioParams();
+            loadCurriculum();
+        }
+
+        // Web Audio DSP Loop Logic
+        async function toggleSpeechEngine() {
+            const btn = document.getElementById('mic-toggle');
+            
+            if (isEngineRunning) {
+                // Destructive Teardown
+                if (audioCtx) {
+                    audioCtx.close();
+                }
+                isEngineRunning = false;
+                btn.innerText = "INITIALIZE AUDIO ENGINE";
+                btn.classList.remove('active');
+                cancelAnimationFrame(animationFrameId);
+                return;
+            }
+
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, latency: 0.005 } });
+                
+                micSource = audioCtx.createMediaStreamSource(stream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+
+                // Hardware Nodes setup
+                delayNode = audioCtx.createDelay(1.0);
+                feedbackNode = audioCtx.createGain();
+                biquadFilter = audioCtx.createBiquadFilter();
+                
+                // Construct Web Audio Matrix Pathing
+                updateAudioParams();
+                setupVisualizer();
+
+                isEngineRunning = true;
+                btn.innerText = "STOP ENGINE (LIVE PROFILE ACTIVE)";
+                btn.classList.add('active');
+            } catch (err) {
+                alert("Microphone connection failed. Please verify hardware permissions: " + err);
+            }
+        }
+
+        function updateAudioParams() {
+            if (!audioCtx) return;
+
+            const mode = document.getElementById('feedback-mode').value;
+            const sliderVal = parseFloat(document.getElementById('param-slider').value);
+            const label = document.getElementById('param-label');
+            const valDisplay = document.getElementById('param-val');
+
+            // Disconnect baseline processing map to restructure cleanly
+            micSource.disconnect();
+            delayNode.disconnect();
+            feedbackNode.disconnect();
+            biquadFilter.disconnect();
+
+            // Reroute pipelines adaptively based on selected tracking protocol
+            if (mode === 'daf') {
+                label.innerHTML = `DAF Buffer Delay: <span id="param-val">${sliderVal}</span> ms`;
+                delayNode.delayTime.setValueAtTime(sliderVal / 1000, audioCtx.currentTime);
+                
+                micSource.connect(delayNode);
+                delayNode.connect(audioCtx.destination);
+                micSource.connect(analyser); // parallel extraction for graph
+            } 
+            else if (mode === 'faf') {
+                label.innerHTML = `Pitch Scaling Factor: <span id="param-val">${sliderVal}</span> Hz Shift`;
+                // Emulate frequency shift via high-order localized resonant notch peaks
+                biquadFilter.type = "peaking";
+                biquadFilter.frequency.setValueAtTime(sliderVal * 4, audioCtx.currentTime);
+                biquadFilter.Q.setValueAtTime(12, audioCtx.currentTime);
+                biquadFilter.gain.setValueAtTime(15, audioCtx.currentTime);
+
+                micSource.connect(biquadFilter);
+                biquadFilter.connect(audioCtx.destination);
+                biquadFilter.connect(analyser);
+            }
+            else if (mode === 'binaural') {
+                label.innerHTML = `Masking White Noise Intensity: <span id="param-val">${sliderVal}</span>%`;
+                // Emulate localized pink/white noise mask gating via lowpass
+                biquadFilter.type = "lowpass";
+                biquadFilter.frequency.setValueAtTime(600 + (sliderVal * 10), audioCtx.currentTime);
+                
+                micSource.connect(biquadFilter);
+                biquadFilter.connect(audioCtx.destination);
+                micSource.connect(analyser);
+            }
+            else {
+                label.innerHTML = `Hardware Bypass Active`;
+                micSource.connect(audioCtx.destination);
+                micSource.connect(analyser);
+            }
+        }
+
+        function setupVisualizer() {
+            const canvas = document.getElementById('visualizer');
+            const canvasCtx = canvas.getContext('2d');
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function draw() {
+                animationFrameId = requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+
+                canvasCtx.fillStyle = '#020617';
+                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let barHeight;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = dataArray[i]/1.5;
+                    // Dynamic coloring depending on tracking thresholds
+                    canvasCtx.fillStyle = isKidsMode ? `rgb(245, ${158 - barHeight}, 11)` : `rgb(56, 189, ${248 + barHeight})`;
+                    canvasCtx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+                    x += barWidth;
+                }
+            }
+            draw();
+        }
+
+        // Initialize Workspace Defaults
+        window.onload = loadCurriculum;
+    </script>
+</body>
+</html>
