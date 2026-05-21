@@ -1,321 +1,1440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FluencyEngine Pro - Dual Auditory & Motor Speech Suite</title>
-    <style>
-        :root {
-            --bg-dark: #0f172a;
-            --surface-dark: #1e293b;
-            --accent-glow: #38bdf8;
-            --accent-kids: #f59e0b;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluency Studio — Adaptive Speech Therapy Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:           #07090f;
+      --surface:      #0d1117;
+      --surface-2:    #131922;
+      --surface-3:    #1a2332;
+      --border:       rgba(255,255,255,0.07);
+      --border-glow:  rgba(82,196,255,0.3);
+      --accent:       #52c4ff;
+      --accent-2:     #a78bfa;
+      --accent-3:     #34d399;
+      --danger:       #f87171;
+      --text:         #e8f0ff;
+      --text-2:       #8899b8;
+      --text-3:       #4a5a78;
+      --glow-blue:    0 0 40px rgba(82,196,255,0.15), 0 0 80px rgba(82,196,255,0.05);
+      --glow-purple:  0 0 40px rgba(167,139,250,0.15);
+      --font-ui:      'Syne', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+      --font-kids:    'Nunito', sans-serif;
+      --radius:       14px;
+      --radius-sm:    8px;
+      --speed:        0.25s;
+      --ease:         cubic-bezier(0.4,0,0.2,1);
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-light); min-height: 100vh; display: flex; flex-direction: column; }
-        
-        header { background: var(--surface-dark); padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 1.5rem; color: var(--accent-glow); letter-spacing: -0.5px; }
-        
-        .mode-toggle-btn { background: var(--accent-kids); color: var(--bg-dark); border: none; padding: 0.6rem 1.2rem; font-weight: bold; border-radius: 20px; cursor: pointer; transition: all 0.2s ease; }
-        .mode-toggle-btn:hover { opacity: 0.9; transform: scale(1.03); }
+      /* Kids palette */
+      --k-bg:         #fef9f0;
+      --k-surface:    #ffffff;
+      --k-surface-2:  #fff5e0;
+      --k-border:     rgba(255,140,60,0.18);
+      --k-accent:     #ff6b35;
+      --k-accent-2:   #ffba08;
+      --k-accent-3:   #43aa8b;
+      --k-text:       #2d1b00;
+      --k-text-2:     #7a5c2e;
+      --k-text-3:     #c4a57b;
+    }
 
-        main { flex: 1; padding: 2rem; max-width: 1400px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-        @media(max-width: 900px) { main { grid-template-columns: 1fr; } }
+    /* ─── RESET ────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      transition: background 0.5s var(--ease), color 0.5s var(--ease);
+    }
 
-        .panel { background: var(--surface-dark); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
-        h2 { font-size: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    /* ─── SCROLLBAR ─────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        select, input[type="range"] { width: 100%; background: var(--bg-dark); border: 1px solid var(--border); padding: 0.75rem; color: white; border-radius: 6px; }
-        
-        .btn-primary { background: var(--accent-glow); color: var(--bg-dark); border: none; padding: 1rem; font-weight: bold; font-size: 1rem; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
-        .btn-primary:hover { background: #7dd3fc; }
-        .btn-primary.active { background: #ef4444; color: white; }
+    /* ─── BACKGROUND MESH ───────────────────────────────────────────── */
+    .bg-mesh {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 80vw 60vh at 10% 10%, rgba(82,196,255,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 60vw 80vh at 90% 80%, rgba(167,139,250,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 50vw 50vh at 50% 50%, rgba(52,211,153,0.02) 0%, transparent 70%);
+      transition: opacity 0.5s;
+    }
+    body.kids-mode .bg-mesh {
+      background:
+        radial-gradient(ellipse 80vw 60vh at 10% 10%, rgba(255,186,8,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 60vw 80vh at 90% 80%, rgba(255,107,53,0.05) 0%, transparent 70%);
+    }
 
-        .visualizer-container { position: relative; background: #020617; border-radius: 8px; height: 250px; overflow: hidden; border: 1px solid var(--border); }
-        canvas { width: 100%; height: 100%; display: block; }
+    /* ─── LAYOUT ─────────────────────────────────────────────────────── */
+    .app-wrapper { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100dvh; }
 
-        .curriculum-box { overflow-y: auto; max-height: 400px; padding-right: 0.5rem; }
-        .day-card { background: var(--bg-dark); border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; cursor: pointer; transition: border 0.2s; }
-        .day-card:hover { border-color: var(--accent-glow); }
-        .day-card.active { border-color: var(--accent-glow); background: #1e293b; }
-        .day-title { font-weight: bold; color: var(--accent-glow); display: flex; justify-content: space-between; margin-bottom: 0.25rem; }
-        
-        /* Kids Mode Theme Overrides via Body Class */
-        body.kids-mode { --bg-dark: #fff7ed; --surface-dark: #ffffff; --text-light: #431407; --border: #fed7aa; --accent-glow: #ea580c; }
-        body.kids-mode .panel { box-shadow: 0 10px 15px -3px rgba(251, 146, 60, 0.1); }
-        body.kids-mode .day-title { color: var(--accent-kids); }
-        body.kids-mode .btn-primary { background: var(--accent-kids); color: white; }
-        
-        .kids-avatar { display: none; text-align: center; font-size: 4rem; margin-bottom: 1rem; animation: bounce 2s infinite; }
-        body.kids-mode .kids-avatar { display: block; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    </style>
+    /* ─── HEADER ─────────────────────────────────────────────────────── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      transition: background 0.5s, border-color 0.5s;
+    }
+    body.kids-mode header {
+      background: rgba(255,249,240,0.92);
+      border-bottom-color: var(--k-border);
+    }
+
+    .logo-area { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 0 20px rgba(82,196,255,0.3);
+      transition: all 0.5s;
+    }
+    body.kids-mode .logo-mark {
+      background: linear-gradient(135deg, var(--k-accent), var(--k-accent-2));
+      box-shadow: 0 0 20px rgba(255,107,53,0.3);
+    }
+    .logo-text { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .logo-text span { color: var(--accent); transition: color 0.5s; }
+    body.kids-mode .logo-text span { color: var(--k-accent); }
+    .version-tag {
+      font-family: var(--font-mono); font-size: 0.65rem;
+      color: var(--text-3); background: var(--surface-2);
+      padding: 2px 7px; border-radius: 4px;
+      border: 1px solid var(--border);
+      transition: all 0.5s;
+    }
+    body.kids-mode .version-tag { background: var(--k-surface-2); border-color: var(--k-border); color: var(--k-text-3); }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .engine-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--text-2); padding: 0.4rem 0.8rem;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: all 0.5s;
+    }
+    body.kids-mode .engine-badge { background: var(--k-surface-2); border-color: var(--k-border); color: var(--k-text-2); }
+    .engine-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-3);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .engine-badge.live .dot {
+      background: var(--accent-3);
+      box-shadow: 0 0 8px var(--accent-3);
+      animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .mode-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600;
+      padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer;
+      transition: all var(--speed) var(--ease);
+    }
+    .mode-btn:hover { border-color: var(--accent); color: var(--accent); }
+    body.kids-mode .mode-btn {
+      background: var(--k-surface-2); border-color: var(--k-border);
+      color: var(--k-text);
+    }
+    body.kids-mode .mode-btn:hover { border-color: var(--k-accent); color: var(--k-accent); }
+
+    /* ─── MAIN GRID ─────────────────────────────────────────────────── */
+    main {
+      flex: 1; display: grid;
+      grid-template-columns: 380px 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 0;
+    }
+    @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+
+    /* ─── SIDEBAR ─────────────────────────────────────────────────────── */
+    .sidebar {
+      grid-row: 1 / -1;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transition: background 0.5s, border-color 0.5s;
+    }
+    body.kids-mode .sidebar { background: var(--k-surface); border-right-color: var(--k-border); }
+
+    /* Sidebar top: DSP section */
+    .dsp-section {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      transition: border-color 0.5s;
+    }
+    body.kids-mode .dsp-section { border-bottom-color: var(--k-border); }
+
+    .section-label {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.12em;
+      color: var(--text-3); text-transform: uppercase; margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: color 0.5s;
+    }
+    body.kids-mode .section-label { color: var(--k-text-3); }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    body.kids-mode .section-label::after { background: var(--k-border); }
+
+    /* Kids avatar area */
+    .kids-avatar-area {
+      display: none;
+      flex-direction: column; align-items: center;
+      margin-bottom: 1.5rem;
+      gap: 0.5rem;
+    }
+    body.kids-mode .kids-avatar-area { display: flex; }
+    .avatar-ring {
+      width: 90px; height: 90px;
+      background: linear-gradient(135deg, #ffba08, #ff6b35);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+      animation: float 3s ease-in-out infinite;
+      box-shadow: 0 8px 30px rgba(255,107,53,0.3);
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .avatar-greeting {
+      font-family: var(--font-kids); font-size: 0.85rem; font-weight: 700;
+      color: var(--k-text-2); text-align: center;
+    }
+
+    /* Stars / XP bar for kids */
+    .xp-bar-wrap {
+      display: none; padding: 0 1.5rem 1.5rem;
+      flex-shrink: 0;
+    }
+    body.kids-mode .xp-bar-wrap { display: block; }
+    .xp-label {
+      font-family: var(--font-kids); font-size: 0.78rem; font-weight: 700;
+      color: var(--k-text-2); display: flex; justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+    .xp-track {
+      height: 10px; background: var(--k-surface-2); border-radius: 5px;
+      border: 1px solid var(--k-border); overflow: hidden;
+    }
+    .xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffba08, #ff6b35);
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.6s var(--ease);
+    }
+    .star-row {
+      display: flex; gap: 0.3rem; margin-top: 0.75rem; flex-wrap: wrap;
+    }
+    .star { font-size: 1.1rem; filter: grayscale(1) opacity(0.35); transition: filter 0.4s, transform 0.3s; }
+    .star.earned { filter: none; animation: star-pop 0.4s var(--ease) forwards; }
+    @keyframes star-pop { 0%{transform:scale(0)} 60%{transform:scale(1.3)} 100%{transform:scale(1)} }
+
+    /* Protocol selector */
+    .protocol-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .protocol-btn {
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text-2); font-family: var(--font-ui); font-size: 0.72rem; font-weight: 600;
+      padding: 0.6rem 0.5rem; border-radius: var(--radius-sm); cursor: pointer;
+      text-align: center; transition: all var(--speed) var(--ease);
+      line-height: 1.3;
+    }
+    body.kids-mode .protocol-btn { background: var(--k-surface-2); border-color: var(--k-border); color: var(--k-text-2); font-family: var(--font-kids); }
+    .protocol-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(82,196,255,0.05); }
+    body.kids-mode .protocol-btn:hover { border-color: var(--k-accent); color: var(--k-accent); background: rgba(255,107,53,0.05); }
+    .protocol-btn.active { background: rgba(82,196,255,0.1); border-color: var(--accent); color: var(--accent); }
+    body.kids-mode .protocol-btn.active { background: rgba(255,107,53,0.1); border-color: var(--k-accent); color: var(--k-accent); }
+    .protocol-btn .pb-icon { font-size: 1.1rem; display: block; margin-bottom: 0.25rem; }
+
+    /* Slider control */
+    .ctrl-row { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .ctrl-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .ctrl-label { font-size: 0.75rem; font-weight: 600; color: var(--text-2); transition: color 0.5s; }
+    body.kids-mode .ctrl-label { color: var(--k-text-2); font-family: var(--font-kids); }
+    .ctrl-val { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); transition: color 0.5s; }
+    body.kids-mode .ctrl-val { color: var(--k-accent); font-family: var(--font-kids); }
+    input[type="range"] {
+      width: 100%; -webkit-appearance: none; appearance: none;
+      height: 4px; border-radius: 2px;
+      background: var(--surface-3); outline: none; cursor: pointer;
+      transition: background 0.5s;
+    }
+    body.kids-mode input[type="range"] { background: var(--k-surface-2); }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 8px rgba(82,196,255,0.5);
+      transition: background 0.5s, box-shadow 0.5s;
+    }
+    body.kids-mode input[type="range"]::-webkit-slider-thumb {
+      background: var(--k-accent);
+      box-shadow: 0 0 8px rgba(255,107,53,0.5);
+    }
+
+    /* Engine button */
+    .engine-btn {
+      width: 100%; padding: 0.9rem;
+      background: linear-gradient(135deg, rgba(82,196,255,0.15), rgba(167,139,250,0.1));
+      border: 1px solid var(--accent);
+      color: var(--accent); font-family: var(--font-ui); font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: var(--radius-sm); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      transition: all var(--speed) var(--ease);
+      position: relative; overflow: hidden;
+    }
+    .engine-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(82,196,255,0.2), rgba(167,139,250,0.15));
+      opacity: 0; transition: opacity var(--speed);
+    }
+    .engine-btn:hover::before { opacity: 1; }
+    .engine-btn.running {
+      background: linear-gradient(135deg, rgba(248,113,113,0.15), rgba(248,113,113,0.08));
+      border-color: var(--danger); color: var(--danger);
+    }
+    .engine-btn.running::before { background: rgba(248,113,113,0.1); }
+    body.kids-mode .engine-btn {
+      background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,186,8,0.1));
+      border-color: var(--k-accent); color: var(--k-accent);
+      font-family: var(--font-kids); border-radius: 30px;
+    }
+    body.kids-mode .engine-btn.running { border-color: #e63946; color: #e63946; }
+
+    /* Visualizer */
+    .viz-wrap {
+      padding: 1rem 1.5rem 1.5rem;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.5s;
+    }
+    body.kids-mode .viz-wrap { border-bottom-color: var(--k-border); }
+    .viz-canvas-wrap {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden; height: 100px;
+      position: relative;
+      transition: all 0.5s;
+    }
+    body.kids-mode .viz-canvas-wrap {
+      background: var(--k-surface-2);
+      border-color: var(--k-border);
+    }
+    #visualizer { display: block; width: 100%; height: 100%; }
+
+    /* STT live transcript area */
+    .stt-wrap {
+      padding: 0 1.5rem 1rem;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.5s;
+    }
+    body.kids-mode .stt-wrap { border-bottom-color: var(--k-border); }
+    #transcript-display {
+      min-height: 48px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.6rem 0.8rem;
+      font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6;
+      color: var(--text-2); word-break: break-word;
+      transition: all 0.5s;
+    }
+    body.kids-mode #transcript-display {
+      background: var(--k-surface-2); border-color: var(--k-border);
+      font-family: var(--font-kids); color: var(--k-text-2);
+    }
+    #transcript-display .highlighted { color: var(--accent); font-weight: 600; }
+    body.kids-mode #transcript-display .highlighted { color: var(--k-accent); }
+    #transcript-display .flagged { color: var(--danger); text-decoration: underline wavy var(--danger); }
+
+    /* Curriculum scroll */
+    .curriculum-section {
+      flex: 1; overflow-y: auto; padding: 1rem 1.5rem 2rem;
+    }
+
+    .day-card {
+      padding: 0.9rem 1rem;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); margin-bottom: 0.5rem;
+      cursor: pointer; transition: all var(--speed) var(--ease);
+      position: relative; overflow: hidden;
+    }
+    .day-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 2px; background: var(--accent);
+      opacity: 0; transform: scaleY(0);
+      transition: opacity var(--speed), transform var(--speed) var(--ease);
+      transform-origin: bottom;
+    }
+    .day-card:hover { border-color: rgba(82,196,255,0.25); background: var(--surface-3); }
+    .day-card:hover::before { opacity: 0.5; transform: scaleY(1); }
+    .day-card.active {
+      border-color: rgba(82,196,255,0.4);
+      background: rgba(82,196,255,0.05);
+    }
+    .day-card.active::before { opacity: 1; transform: scaleY(1); }
+    .day-card.completed { border-color: rgba(52,211,153,0.3); }
+    .day-card.completed::before { background: var(--accent-3); opacity: 0.6; transform: scaleY(1); }
+    body.kids-mode .day-card {
+      background: var(--k-surface-2); border-color: var(--k-border);
+      border-radius: 14px; font-family: var(--font-kids);
+    }
+    body.kids-mode .day-card::before { background: var(--k-accent); }
+    body.kids-mode .day-card:hover { border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.04); }
+    body.kids-mode .day-card.active { border-color: rgba(255,107,53,0.5); background: rgba(255,107,53,0.07); }
+
+    .day-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
+    .day-num { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-3); transition: color 0.5s; }
+    body.kids-mode .day-num { font-family: var(--font-kids); color: var(--k-text-3); }
+    .day-badge { font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; }
+    .day-badge.done { background: rgba(52,211,153,0.15); color: var(--accent-3); }
+    body.kids-mode .day-badge.done { background: rgba(67,170,139,0.15); }
+    .day-title-text { font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; transition: color 0.5s; }
+    body.kids-mode .day-title-text { color: var(--k-text); font-size: 0.9rem; }
+    .day-subtitle { font-size: 0.72rem; color: var(--text-3); line-height: 1.4; transition: color 0.5s; }
+    body.kids-mode .day-subtitle { color: var(--k-text-3); font-size: 0.8rem; }
+
+    /* ─── CONTENT AREA ──────────────────────────────────────────────── */
+    .content-area {
+      grid-column: 2;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    @media (max-width: 1000px) { .content-area { grid-column: 1; } }
+
+    /* Prompt panel */
+    .prompt-panel {
+      flex: 1; overflow-y: auto;
+      padding: 2rem;
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+
+    /* Track info bar */
+    .track-bar {
+      display: flex; align-items: center; gap: 1rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.5s;
+    }
+    body.kids-mode .track-bar { border-bottom-color: var(--k-border); }
+    .track-pill {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 0.3rem 0.9rem; border-radius: 20px;
+      background: rgba(82,196,255,0.1); color: var(--accent);
+      border: 1px solid rgba(82,196,255,0.2);
+      transition: all 0.5s; text-transform: uppercase;
+    }
+    body.kids-mode .track-pill {
+      background: rgba(255,107,53,0.1); color: var(--k-accent);
+      border-color: rgba(255,107,53,0.2); font-family: var(--font-kids);
+    }
+    .track-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+    body.kids-mode .track-title { font-family: var(--font-kids); font-size: 1.5rem; }
+    .track-desc { font-size: 0.82rem; color: var(--text-2); line-height: 1.5; transition: color 0.5s; }
+    body.kids-mode .track-desc { font-family: var(--font-kids); color: var(--k-text-2); }
+
+    /* Strategy card */
+    .strategy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      position: relative; overflow: hidden;
+      transition: all 0.5s;
+    }
+    .strategy-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+    body.kids-mode .strategy-card {
+      background: var(--k-surface);
+      border-color: var(--k-border);
+      border-radius: 20px;
+    }
+    body.kids-mode .strategy-card::before {
+      background: linear-gradient(90deg, var(--k-accent), var(--k-accent-2));
+    }
+    .strat-eyebrow {
+      font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 0.6rem;
+      transition: color 0.5s;
+    }
+    body.kids-mode .strat-eyebrow { font-family: var(--font-kids); color: var(--k-text-3); }
+    .strat-text {
+      font-size: 0.95rem; line-height: 1.7; color: var(--text);
+      transition: color 0.5s;
+    }
+    body.kids-mode .strat-text { font-family: var(--font-kids); font-size: 1rem; color: var(--k-text); }
+
+    /* Practice prompt */
+    .practice-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden; transition: all 0.5s;
+    }
+    body.kids-mode .practice-card { background: var(--k-surface); border-color: var(--k-border); border-radius: 20px; }
+    .practice-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 1.2rem;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.5s;
+    }
+    body.kids-mode .practice-top { background: var(--k-surface-2); border-bottom-color: var(--k-border); }
+    .practice-label {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-2);
+      transition: color 0.5s;
+    }
+    body.kids-mode .practice-label { font-family: var(--font-kids); font-size: 0.75rem; font-weight: 700; color: var(--k-text-2); }
+    .practice-actions { display: flex; gap: 0.5rem; }
+    .icon-btn {
+      width: 28px; height: 28px; border-radius: var(--radius-sm);
+      background: var(--surface-3); border: 1px solid var(--border);
+      color: var(--text-2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; transition: all var(--speed);
+    }
+    .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+    body.kids-mode .icon-btn { background: var(--k-surface-2); border-color: var(--k-border); }
+    body.kids-mode .icon-btn:hover { border-color: var(--k-accent); color: var(--k-accent); }
+    #prompt-text {
+      padding: 1.5rem 1.2rem;
+      font-size: 1.05rem; line-height: 1.9; letter-spacing: 0.01em;
+      color: var(--text); min-height: 100px;
+      transition: color 0.5s;
+    }
+    body.kids-mode #prompt-text { font-family: var(--font-kids); font-size: 1.15rem; color: var(--k-text); }
+    #prompt-text .stt-word {
+      cursor: default;
+      border-radius: 3px; padding: 0 2px;
+      transition: background 0.3s, color 0.3s;
+    }
+    #prompt-text .stt-word.spoken { background: rgba(52,211,153,0.2); color: var(--accent-3); }
+    #prompt-text .stt-word.flagged { background: rgba(248,113,113,0.15); color: var(--danger); text-decoration: underline wavy; }
+
+    /* Session complete overlay */
+    .complete-flash {
+      position: fixed; inset: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(7,9,15,0.85);
+      backdrop-filter: blur(10px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    body.kids-mode .complete-flash { background: rgba(254,249,240,0.85); }
+    .complete-flash.show { opacity: 1; pointer-events: all; }
+    .complete-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px; padding: 3rem;
+      text-align: center; max-width: 400px;
+      animation: slide-up 0.5s var(--ease);
+    }
+    body.kids-mode .complete-card { background: var(--k-surface); border-color: var(--k-border); }
+    @keyframes slide-up { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .complete-icon { font-size: 4rem; margin-bottom: 1rem; display: block; }
+    .complete-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+    body.kids-mode .complete-title { font-family: var(--font-kids); }
+    .complete-sub { font-size: 0.9rem; color: var(--text-2); margin-bottom: 1.5rem; }
+    body.kids-mode .complete-sub { font-family: var(--font-kids); color: var(--k-text-2); }
+    .complete-close {
+      padding: 0.7rem 2rem; border-radius: 30px; cursor: pointer;
+      background: var(--accent); border: none; color: var(--bg);
+      font-family: var(--font-ui); font-size: 0.85rem; font-weight: 700;
+      transition: opacity var(--speed);
+    }
+    body.kids-mode .complete-close { background: var(--k-accent); font-family: var(--font-kids); }
+    .complete-close:hover { opacity: 0.85; }
+
+    /* Metric row */
+    .metrics-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    }
+    .metric-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 1.2rem;
+      display: flex; flex-direction: column; gap: 0.25rem;
+      transition: all 0.5s;
+    }
+    body.kids-mode .metric-card { background: var(--k-surface); border-color: var(--k-border); border-radius: 18px; }
+    .metric-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); font-family: var(--font-mono); transition: color 0.5s; }
+    body.kids-mode .metric-label { font-family: var(--font-kids); color: var(--k-text-3); font-size: 0.72rem; }
+    .metric-val { font-size: 1.6rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1; transition: color 0.5s; }
+    body.kids-mode .metric-val { font-family: var(--font-kids); color: var(--k-text); }
+    .metric-unit { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-3); margin-top: 0.1rem; }
+
+    /* STT highlight prompt */
+    .stt-prompt-hint {
+      background: rgba(82,196,255,0.05); border: 1px dashed rgba(82,196,255,0.2);
+      border-radius: var(--radius-sm); padding: 0.7rem 1rem;
+      font-size: 0.78rem; color: var(--text-3); font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: all 0.5s;
+    }
+    body.kids-mode .stt-prompt-hint { background: rgba(255,107,53,0.05); border-color: rgba(255,107,53,0.2); font-family: var(--font-kids); color: var(--k-text-3); }
+    .stt-prompt-hint.active { color: var(--accent); border-color: rgba(82,196,255,0.4); }
+    body.kids-mode .stt-prompt-hint.active { color: var(--k-accent); border-color: rgba(255,107,53,0.4); }
+
+    /* ─── EMPTY STATE ───────────────────────────────────────────────── */
+    .empty-state {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--text-3); text-align: center; gap: 1rem; padding: 3rem;
+      font-size: 0.9rem; transition: color 0.5s;
+    }
+    body.kids-mode .empty-state { font-family: var(--font-kids); color: var(--k-text-3); }
+    .empty-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+
+    /* ─── TRANSITIONS ───────────────────────────────────────────────── */
+    .fade-in { animation: fade-in 0.4s var(--ease) forwards; }
+    @keyframes fade-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .panel-transition { transition: background 0.5s, border-color 0.5s, color 0.5s; }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────────── */
+    footer {
+      text-align: center; padding: 0.6rem;
+      font-family: var(--font-mono); font-size: 0.62rem;
+      color: var(--text-3); border-top: 1px solid var(--border);
+      transition: all 0.5s;
+    }
+    body.kids-mode footer { border-top-color: var(--k-border); color: var(--k-text-3); }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1 id="app-title">⚡ FluencyEngine Pro <span style="font-size: 0.8rem; vertical-align: middle; padding: 2px 6px; background: #334155; border-radius: 4px; color: white; margin-left: 5px;">v1.2.0</span></h1>
-        <button class="mode-toggle-btn" id="mode-toggle" onclick="toggleMode()">Switch to Kids Mode 🎨</button>
-    </header>
+<div class="bg-mesh"></div>
+<div class="app-wrapper">
 
-    <main>
-        <!-- Left Panel: DSP Hardware Simulation Layer -->
-        <div class="panel">
-            <h2>🎛️ Neuro-Auditory DSP Controller</h2>
-            <div class="kids-avatar" id="avatar">🦊</div>
-            
-            <div class="control-group">
-                <label for="feedback-mode">Neurological Target Setting</label>
-                <select id="feedback-mode" onchange="updateAudioParams()">
-                    <option value="daf">Delayed Auditory Feedback (DAF Mode)</option>
-                    <option value="faf">Frequency Altered Feedback (FAF Pitch Shift)</option>
-                    <option value="binaural">Choral Masking (White Noise Burst)</option>
-                    <option value="bypass">Hardware Bypass (Pure Mic Loop)</option>
-                </select>
-            </div>
+  <!-- ─── HEADER ──────────────────────────────────────────────────── -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-mark" id="logo-mark">🌊</div>
+      <div>
+        <div class="logo-text">Fluency <span>Studio</span></div>
+      </div>
+      <div class="version-tag" id="version-tag">v2.0.0</div>
+    </div>
+    <div class="header-right">
+      <div class="engine-badge" id="engine-badge">
+        <div class="dot" id="badge-dot"></div>
+        <span id="badge-label">Engine Offline</span>
+      </div>
+      <button class="mode-btn" id="mode-btn" onclick="toggleMode()">
+        <span id="mode-btn-icon">🎨</span>
+        <span id="mode-btn-label">Kids Mode</span>
+      </button>
+    </div>
+  </header>
 
-            <div class="control-group">
-                <label id="param-label" for="param-slider">DAF Buffer Delay: <span id="param-val">100</span> ms</label>
-                <input type="range" id="param-slider" min="20" max="300" step="5" value="100" oninput="updateAudioParams()">
-            </div>
+  <!-- ─── MAIN ─────────────────────────────────────────────────────── -->
+  <main>
 
-            <button class="btn-primary" id="mic-toggle" onclick="toggleSpeechEngine()">INITIALIZE AUDIO ENGINE</button>
-            
-            <div class="control-group">
-                <label>Real-Time Biofeedback Monitor</label>
-                <div class="visualizer-container">
-                    <canvas id="visualizer"></canvas>
-                </div>
-            </div>
+    <!-- ── SIDEBAR ─────────────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <!-- Kids avatar -->
+      <div class="kids-avatar-area">
+        <div class="avatar-ring" id="avatar">🦊</div>
+        <div class="avatar-greeting" id="avatar-greeting">Ready to practice, explorer?</div>
+      </div>
+
+      <!-- XP bar (kids) -->
+      <div class="xp-bar-wrap" id="xp-bar-wrap">
+        <div class="xp-label">
+          <span>🌟 Adventure XP</span>
+          <span id="xp-label-val">0 / 10 pts</span>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+        <div class="star-row" id="star-row">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- DSP section -->
+      <div class="dsp-section">
+        <div class="section-label">Audio Engine</div>
+
+        <!-- Protocol grid -->
+        <div class="protocol-grid" id="protocol-grid">
+          <button class="protocol-btn active" data-mode="daf" onclick="setProtocol(this)">
+            <span class="pb-icon">⏱️</span>DAF Delay
+          </button>
+          <button class="protocol-btn" data-mode="faf" onclick="setProtocol(this)">
+            <span class="pb-icon">🎵</span>FAF Pitch
+          </button>
+          <button class="protocol-btn" data-mode="binaural" onclick="setProtocol(this)">
+            <span class="pb-icon">🎭</span>Choral Mask
+          </button>
+          <button class="protocol-btn" data-mode="bypass" onclick="setProtocol(this)">
+            <span class="pb-icon">🔁</span>Bypass
+          </button>
         </div>
 
-        <!-- Right Panel: Rigorous Educational Engine Layer -->
-        <div class="panel">
-            <h2>📚 Clinical Curriculum Workspace (<span id="track-label">Adult Track</span>)</h2>
-            <div class="control-group">
-                <label>Active Practice Prompt</label>
-                <div id="prompt-display" style="background:#020617; color: #38bdf8; padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border); font-size: 1.1rem; line-height: 1.5; font-weight: 500;">
-                    Select a curriculum day below to begin real-time adaptive speech practice.
-                </div>
-            </div>
-            
-            <label>30-Day Guided Matrix</label>
-            <div class="curriculum-box" id="curriculum-container">
-                <!-- Data injection handled programmatically via JavaScript structural objects -->
-            </div>
+        <div class="ctrl-row" id="slider-row">
+          <div class="ctrl-header">
+            <span class="ctrl-label" id="ctrl-label">DAF Buffer Delay</span>
+            <span class="ctrl-val" id="ctrl-val">100 ms</span>
+          </div>
+          <input type="range" id="param-slider" min="20" max="300" step="5" value="100"
+            oninput="onSliderChange(this.value)" />
         </div>
-    </main>
 
-    <script>
-        // Programmatic Core Datasets
-        const adultCurriculum = [
-            { day: 1, title: "Gentle Vocal Onsets", strategy: "Breathe out a quiet, soft /h/ air stream just before you speak a vowel. Let the vocal cords fold open naturally.", prompt: "[Practice Material]: '---Hhh-Always assume a continuous stream. Hhh-Over the horizon, the evening sun settled down safely.'" },
-            { day: 8, title: "Prolonged Vowel Stretching", strategy: "Elongate structural vowels for 1.5 seconds. Stretch the time domain execution of speech movements safely.", prompt: "[Practice Material]: 'L-i-i-g-h-t-l-y touching the keys. M-a-a-k-i-n-g each word flow continuously into the next phrase sequence.'" },
-            { day: 16, title: "Active Mid-Block Pull-Outs", strategy: "When you encounter a block, do not force forward. Slow down, consciously drop your lower jaw tension, and glide through.", prompt: "[Practice Material]: 'S----(Catch tension, open jaw, drop pressure)---sliding smoothly down into the baseline word structure.'" },
-            { day: 30, title: "Cognitive Noise Thresholds", strategy: "Maintain uninterrupted vocalization even when sensory tracking disruptions or external sound patterns challenge focus.", prompt: "[Practice Material]: 'I maintain autonomous control over my physical speech mechanisms regardless of environments.'" }
-        ];
+        <button class="engine-btn" id="engine-btn" onclick="toggleEngine()">
+          <span id="engine-btn-icon">⚡</span>
+          <span id="engine-btn-label">Initialize Engine</span>
+        </button>
+      </div>
 
-        const kidsCurriculum = [
-            { day: 1, title: "The Turtle Talk Journey", strategy: "Speak like a wise old turtle! Give every single word-part its own little stepping stone. No rushing!", prompt: "[Fun Practice]: 'The. fat. cat. sat. down. on. the. bright. orange. mat.'" },
-            { day: 8, title: "The Magic Copycat Engine", strategy: "Listen carefully to the small voice delay in your ears. Match its soft rhythm exactly like a game of copycat.", prompt: "[Fun Practice]: 'Bouncing bubbles blow big bright blue balloons beautifully.'" },
-            { day: 16, title: "The Freeze & Shake Game", strategy: "If a word gets stuck, freeze! Shake your hands out like a wet puppy, relax your tummy, and let the word slide out easy.", prompt: "[Fun Practice]: 'Sss- (Freeze! Shake it out!) - Super shiny stars sparkle brightly in space.'" },
-            { day: 30, title: "The Brave Story Explorer", strategy: "Tell your app friend a story about an astronaut using your smooth, rhythmic turtle paths without stopping.", prompt: "[Fun Practice]: 'Rocket ships zoom all the way up to Mars with friendly green space puppies!'" }
-        ];
+      <!-- Visualizer -->
+      <div class="viz-wrap">
+        <div class="section-label">Biofeedback Monitor</div>
+        <div class="viz-canvas-wrap">
+          <canvas id="visualizer"></canvas>
+        </div>
+      </div>
 
-        let isKidsMode = false;
-        let audioCtx = null;
-        let micSource = null;
-        let delayNode = null;
-        let feedbackNode = null;
-        let biquadFilter = null;
-        let analyser = null;
-        let isEngineRunning = false;
-        let animationFrameId = null;
+      <!-- STT transcript -->
+      <div class="stt-wrap">
+        <div class="section-label">Live Speech Recognition</div>
+        <div id="transcript-display">
+          <span style="color:var(--text-3); font-size:0.72rem;">Awaiting engine start…</span>
+        </div>
+      </div>
 
-        // Initialize UI Elements
-        function loadCurriculum() {
-            const container = document.getElementById('curriculum-container');
-            container.innerHTML = '';
-            const activeDataset = isKidsMode ? kidsCurriculum : adultCurriculum;
-            
-            activeDataset.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = `day-card ${index === 0 ? 'active' : ''}`;
-                card.onclick = () => selectDay(card, item);
-                card.innerHTML = `
-                    <div class="day-title">
-                        <span>Day ${item.day}: ${item.title}</span>
-                        <span>🎯 Goal</span>
-                    </div>
-                    <div style="font-size:0.85rem; color:var(--text-muted);">${item.strategy}</div>
-                `;
-                container.appendChild(card);
-                if(index === 0) selectDay(card, item);
-            });
-        }
+      <!-- Curriculum -->
+      <div class="curriculum-section" id="curriculum-section">
+        <div class="section-label" id="curriculum-label">30-Day Program</div>
+        <div id="curriculum-list"><!-- injected --></div>
+      </div>
+    </aside>
 
-        function selectDay(element, item) {
-            document.querySelectorAll('.day-card').forEach(c => c.classList.remove('active'));
-            element.classList.add('active');
-            document.getElementById('prompt-display').innerHTML = `
-                <strong style="color:var(--text-light); display:block; margin-bottom:0.5rem;">STRATEGY: ${item.strategy}</strong>
-                ${item.prompt}
-            `;
-        }
+    <!-- ── CONTENT AREA ─────────────────────────────────────────────── -->
+    <div class="content-area">
+      <div class="prompt-panel" id="prompt-panel">
+        <!-- Empty state shown initially -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">🎙️</div>
+          <div style="font-weight:700; font-size:1rem;">Select a session to begin</div>
+          <div>Choose any day from the 30-day program in the sidebar.<br>Your audio engine and speech tracking will activate automatically.</div>
+        </div>
+      </div>
+    </div>
 
-        function toggleMode() {
-            isKidsMode = !isKidsMode;
-            document.body.classList.toggle('kids-mode', isKidsMode);
-            
-            const btn = document.getElementById('mode-toggle');
-            const title = document.getElementById('track-label');
-            const selectHardware = document.getElementById('feedback-mode');
-            
-            if(isKidsMode) {
-                btn.innerText = "Switch to Adult Mode 👔";
-                title.innerText = "Kids Adventure Track";
-                selectHardware.value = "daf";
-                document.getElementById('param-slider').value = 140; 
-            } else {
-                btn.innerText = "Switch to Kids Mode 🎨";
-                title.innerText = "Adult Track";
-                selectHardware.value = "daf";
-                document.getElementById('param-slider').value = 100;
-            }
-            updateAudioParams();
-            loadCurriculum();
-        }
+  </main>
 
-        // Web Audio DSP Loop Logic
-        async function toggleSpeechEngine() {
-            const btn = document.getElementById('mic-toggle');
-            
-            if (isEngineRunning) {
-                // Destructive Teardown
-                if (audioCtx) {
-                    audioCtx.close();
-                }
-                isEngineRunning = false;
-                btn.innerText = "INITIALIZE AUDIO ENGINE";
-                btn.classList.remove('active');
-                cancelAnimationFrame(animationFrameId);
-                return;
-            }
+  <footer id="footer">
+    Fluency Studio v2.0.0 &nbsp;·&nbsp; All audio processing is local &amp; browser-sandboxed &nbsp;·&nbsp; No data transmitted
+  </footer>
 
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, latency: 0.005 } });
-                
-                micSource = audioCtx.createMediaStreamSource(stream);
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 256;
+</div><!-- /app-wrapper -->
 
-                // Hardware Nodes setup
-                delayNode = audioCtx.createDelay(1.0);
-                feedbackNode = audioCtx.createGain();
-                biquadFilter = audioCtx.createBiquadFilter();
-                
-                // Construct Web Audio Matrix Pathing
-                updateAudioParams();
-                setupVisualizer();
+<!-- Session complete overlay -->
+<div class="complete-flash" id="complete-flash">
+  <div class="complete-card">
+    <span class="complete-icon" id="complete-icon">✨</span>
+    <div class="complete-title" id="complete-title">Session Complete!</div>
+    <div class="complete-sub" id="complete-sub">Great work. Mark this session as done and move forward.</div>
+    <button class="complete-close" onclick="closeComplete()">Continue</button>
+  </div>
+</div>
 
-                isEngineRunning = true;
-                btn.innerText = "STOP ENGINE (LIVE PROFILE ACTIVE)";
-                btn.classList.add('active');
-            } catch (err) {
-                alert("Microphone connection failed. Please verify hardware permissions: " + err);
-            }
-        }
 
-        function updateAudioParams() {
-            if (!audioCtx) return;
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────
+const adultCurriculum = [
+  { day:1, title:"Gentle Vocal Onsets", tag:"Foundation",
+    strategy:"Begin each vowel-initial syllable with a quiet, breathy /h/ airstream. Let the vocal cords fold together softly, like two feathers touching rather than two palms clapping.",
+    prompt:"Practice this phrase: 'Over the horizon, the evening settles easily.' Notice how each word glides into the next without any hard beginnings." },
+  { day:2, title:"Airflow Continuity", tag:"Foundation",
+    strategy:"Maintain a gentle, uninterrupted stream of air throughout each sentence. Think of your breath as a continuous river — never a series of ponds.",
+    prompt:"'Always allow an easy, open air current to carry each syllable along to the next one in every phrase.'" },
+  { day:3, title:"Slow Articulatory Rate", tag:"Pacing",
+    strategy:"Halve your speaking rate intentionally. Touch each articulatory landmark — lips, tongue, teeth — with awareness and zero urgency.",
+    prompt:"'Moving… slowly… and… deliberately… is… not… weakness. It… is… precision.' (Full slow rate — 1 word per 2 seconds.)" },
+  { day:4, title:"Easy Vowel Extension", tag:"Pacing",
+    strategy:"Stretch the nucleus vowel of each stressed syllable to 1.5× its natural length. The consonants can be brief; the vowel is the foundation.",
+    prompt:"'Liiight. Oooopen. Eaaasy. Flowing — each vowel becomes a long, comfortable room you can rest inside.'" },
+  { day:5, title:"Light Articulatory Contact", tag:"Precision",
+    strategy:"All tongue-to-palate and lip closures should be feather-light. Imagine pressing two soap bubbles together without popping them.",
+    prompt:"'People passing pathways pause briefly before picking up pleasant, playful patterns once more.'" },
+  { day:6, title:"Proprioceptive Awareness", tag:"Precision",
+    strategy:"Before speaking, do a silent body scan: relax jaw, lower shoulders, unclench hands. Speech begins in the body, not just the mouth.",
+    prompt:"Close eyes, scan body, breathe in, exhale — then speak: 'I am calm, clear, and in control of my voice.'" },
+  { day:7, title:"Phrase Boundary Breathing", tag:"Structure",
+    strategy:"Insert a gentle breath pause at every comma and period. Never push past a natural breath boundary in search of fluency.",
+    prompt:"'The summit, (breath) while distant, (breath) remains within reach. (breath) One measured step, (breath) then another.'" },
+  { day:8, title:"Prolonged Vowel Stretching", tag:"Shaping",
+    strategy:"Double down on vowel prolongation. Practice the 'stretched slingshot': pull vowels long, then release consonants smoothly without snapping them forward.",
+    prompt:"'L-i-i-g-h-t-l-y touching the keys. M-a-a-k-i-n-g each word flow continuously into the very next phrase sequence.'" },
+  { day:9, title:"Cancellation Practice", tag:"Modification",
+    strategy:"When a disfluency occurs, finish the word, pause, then consciously reattempt it using a gentle onset. No punishment — only revision.",
+    prompt:"Read aloud. If a stutter occurs, pause fully, breathe, then say the word again slowly and smoothly before continuing." },
+  { day:10, title:"Pull-Out Technique", tag:"Modification",
+    strategy:"When you feel a block starting, do not force through it. Consciously slow your articulatory movement, drop jaw tension, and ease out the back end of the word.",
+    prompt:"'S—— (feel tension, relax jaw, ease out) —sliding smoothly into the baseline of every spoken word structure.'" },
+  { day:11, title:"Preparatory Sets", tag:"Modification",
+    strategy:"Before a feared word, mentally pre-shape the articulators into a gentle, relaxed configuration. 'Set up' the easy production before speaking.",
+    prompt:"Preview each underlined word silently: 'Confidence comes from consistent, careful, conscious daily practice.'" },
+  { day:12, title:"Freezing and Holding", tag:"Desensitization",
+    strategy:"On purpose, enter a voluntary stutter. Hold it for 3 seconds. Study it objectively. Then exit smoothly. Remove its power by examining it.",
+    prompt:"Select any word and intentionally prolong its first sound for 3 full seconds, then release calmly and continue reading." },
+  { day:13, title:"Feared Word Hierarchy", tag:"Desensitization",
+    strategy:"List words from least to most feared. Practice each one, starting with easy ones, moving toward your top-five feared words.",
+    prompt:"Speak 5 words from your personal difficulty list, using gentle onset and pull-out on every one, regardless of fluency outcome." },
+  { day:14, title:"Telephone Simulation", tag:"Application",
+    strategy:"Simulate a phone call scenario. Phone calls remove visual cues, increasing anxiety. Apply full toolkit: onset, pacing, and breathing.",
+    prompt:"Role-play: 'Hello, this is (name). I am calling to (reason). Could you please (request)? Thank you for your time.'" },
+  { day:15, title:"Situational Transfer — Low Stress", tag:"Transfer",
+    strategy:"Apply all techniques in a low-stakes real-world interaction: ordering coffee, greeting a neighbor, reading aloud to a friend.",
+    prompt:"Script a real interaction you'll have today. Write it out, rehearse it here, then execute it. Report back tomorrow." },
+  { day:16, title:"Active Mid-Block Pull-Outs", tag:"Modification",
+    strategy:"When you encounter a block mid-word, do not force forward. Slow down, consciously drop your lower jaw tension, and glide through the rest.",
+    prompt:"'S———(catch tension, open jaw, drop pressure)——sliding smoothly down into the baseline of each word structure.'" },
+  { day:17, title:"Reading Aloud — Slow Pace", tag:"Pacing",
+    strategy:"Read any paragraph at half your natural speed with sustained gentle onsets. Record yourself and compare to yesterday's recording.",
+    prompt:"Read the following at deliberate, slow pace: 'The art of fluent speech is not speed — it is the seamless connection between intention and sound.'" },
+  { day:18, title:"Monologue Practice", tag:"Application",
+    strategy:"Speak unscripted for 2 minutes about any topic. Apply all techniques simultaneously. Fluency is secondary — technique is primary.",
+    prompt:"Speak freely for 2 minutes about: 'A place I find peaceful.' Focus on airflow and gentle onsets throughout." },
+  { day:19, title:"Cognitive Load Resistance", tag:"Advanced",
+    strategy:"Maintain technique while counting backwards from 100 in 7s in your head as you speak. This mimics real-world cognitive interference.",
+    prompt:"While counting backwards by 7 mentally: 'I maintain conscious control over my speech mechanisms regardless of mental load.'" },
+  { day:20, title:"Partner Interruption Drill", tag:"Advanced",
+    strategy:"Have a partner or record yourself, then replay and interrupt playback randomly. Resume smoothly using preparatory sets.",
+    prompt:"Practice recovery: If interrupted mid-sentence, pause fully, reset breath, then resume from a natural phrase boundary — never force." },
+  { day:21, title:"Naturalness Integration", tag:"Naturalness",
+    strategy:"Begin reducing over-extension. Move toward natural prosody while maintaining zero hard contacts and gentle onsets.",
+    prompt:"Read this at natural pace with only gentle onset and airflow as active tools: 'Good morning. The weather looks clear and bright today.'" },
+  { day:22, title:"Rate Modulation", tag:"Naturalness",
+    strategy:"Practice speaking at slow, medium, and fast rates — applying techniques at each. Real speech varies rate; your toolkit must transfer across speeds.",
+    prompt:"Say this sentence at 3 different speeds. Slow: 5 sec. Medium: 3 sec. Fast: 2 sec: 'Every word I speak is mine to shape and own.'" },
+  { day:23, title:"Prosodic Stress Practice", tag:"Naturalness",
+    strategy:"Natural speech uses emphasis. Practice stressing different words in the same sentence while maintaining technique.",
+    prompt:"Stress each bold word in turn: 'I SPEAK with clarity.' / 'I speak WITH clarity.' / 'I speak with CLARITY.'" },
+  { day:24, title:"Group Simulation", tag:"Transfer",
+    strategy:"Simulate speaking to a group — stand up, project, maintain eye contact with a fixed point. Apply your full toolkit at normal volume.",
+    prompt:"Deliver this as if addressing 10 people: 'I want to share something important. (pause) I have been working on my voice, and today it belongs to me.'" },
+  { day:25, title:"Phone — High Stakes Drill", tag:"Transfer",
+    strategy:"Make one real phone call using full technique. Script it beforehand. Your first fluency transfer beyond the therapy room.",
+    prompt:"Script a real call (appointment, question, check-in). Write it, rehearse it here, then make the call. You are ready." },
+  { day:26, title:"Emotional Speech Under Load", tag:"Advanced",
+    strategy:"Practice speaking on emotionally charged topics. Emotion activates the neural loop most strongly. Technique must hold under feeling.",
+    prompt:"Talk for 90 seconds about something you genuinely care about. Apply full toolkit. Feel and speak simultaneously — this is mastery." },
+  { day:27, title:"Spontaneous Conversation Drill", tag:"Advanced",
+    strategy:"Engage someone in a 5-minute spontaneous conversation — no script, no agenda. Apply techniques, but prioritize connection over perfection.",
+    prompt:"Today's assignment is off-screen. Find a real conversation. Your only job is gentle onset and sustained airflow. Report how it felt." },
+  { day:28, title:"Relapse Prevention Map", tag:"Maintenance",
+    strategy:"Identify your three highest-risk situations. Build an explicit micro-plan for each. Relapse is a data point, not a failure.",
+    prompt:"Write three personal high-risk scenarios and one technique response for each. Recite each scenario + response aloud, slowly and clearly." },
+  { day:29, title:"Reflection and Integration", tag:"Maintenance",
+    strategy:"Review your progress. Acknowledge what changed. Name two techniques you will carry permanently. Celebrate the work done.",
+    prompt:"Speak freely for 3 minutes: 'On Day 1 I was… Today I am… The one thing I will always carry with me is…'" },
+  { day:30, title:"Cognitive Noise Thresholds", tag:"Mastery",
+    strategy:"Maintain uninterrupted vocalization even when sensory disruptions, emotional noise, or external patterns challenge your focus. This is full integration.",
+    prompt:"'I maintain autonomous control over my physical speech mechanisms regardless of internal pressure or external environment. My voice is mine.'" }
+];
 
-            const mode = document.getElementById('feedback-mode').value;
-            const sliderVal = parseFloat(document.getElementById('param-slider').value);
-            const label = document.getElementById('param-label');
-            const valDisplay = document.getElementById('param-val');
+const kidsCurriculum = [
+  { day:1, title:"The Turtle Talk Journey", tag:"Start Here!",
+    strategy:"Speak like a wise old turtle who never rushes. Give every single word its very own stepping stone. No word is in a hurry!",
+    prompt:"'The. fat. cat. sat. on. the. bright. orange. mat.' (Touch each word like a separate stepping stone across a pond!)" },
+  { day:2, title:"Magic Bubble Breaths", tag:"Breathing",
+    strategy:"Before each sentence, blow out a tiny invisible magic bubble with your mouth. This sets up the perfect airflow for smooth, easy words!",
+    prompt:"Blow bubble → then say: 'I blew a big beautiful bubble that bounced over the bright blue bushes beyond the barn.'" },
+  { day:3, title:"The Slow-Mo Superhero", tag:"Pacing",
+    strategy:"Slow-motion heroes are the most powerful! When we slow down our words, we give our voice superpowers of smoothness.",
+    prompt:"'Sloooow-moooo suuuuperherooooes saaave the daaaaay with caaaalm, cooooool confidence.' (Say it like you're in a movie slow-mo scene!)" },
+  { day:4, title:"Stretchy Vowel Superpower", tag:"Pacing",
+    strategy:"Vowels (A, E, I, O, U) are like stretchy superpower bands. The longer you stretch them, the smoother your voice flows!",
+    prompt:"'Oooopen your mooouth wiiiide and leeeet the woooords fluuuuw out liiike a riiiiiver.' (Stretch those vowels like taffy!)" },
+  { day:5, title:"The Feather Touch", tag:"Precision",
+    strategy:"Imagine your lips and tongue are holding a tiny feather between them — so gently that the feather never falls! That's how softly we touch sounds together.",
+    prompt:"'Pretty purple parrots pick perfectly placed purple petals every pleasant afternoon.' (Feather-light lips on every P!)" },
+  { day:6, title:"The Body Reset Button", tag:"Calm",
+    strategy:"Before speaking, press your invisible reset button: wiggle your fingers, drop your shoulders, take a big belly breath. Now your voice is ready!",
+    prompt:"Wiggle hands → drop shoulders → big belly breath → then say: 'I am calm. I am ready. My words come out smooth and strong.'" },
+  { day:7, title:"Story Stepping Stones", tag:"Structure",
+    strategy:"Every pause in a sentence is like a stepping stone. Jump from stone to stone — don't rush or you might fall in! Each pause is a safe rest spot.",
+    prompt:"'The dragon, (jump) who loved rainbows, (jump) flew high above the clouds, (jump) looking for the perfect gold treasure below.'" },
+  { day:8, title:"The Magic Copycat Engine", tag:"Listening",
+    strategy:"Listen carefully to the small echo you hear in your headphones. Your voice and the echo are playing a copycat game. Match the rhythm — it smooths everything out!",
+    prompt:"'Bouncing bubbles blow big bright blue balloons beautifully.' (Copy the echo — stay with its rhythm like a dance partner!)" },
+  { day:9, title:"The Word Redo Game", tag:"Modification",
+    strategy:"If a word gets a little bumpy, that's okay! Just finish it, take a tiny pause, and try the word again smooth and easy. It's just a fun redo!",
+    prompt:"If any word feels bumpy during practice: stop, breathe, then say just that word again super-smoothly before continuing your sentence." },
+  { day:10, title:"The Slow Slide Trick", tag:"Modification",
+    strategy:"When a word feels stuck, don't push — SLIDE! Imagine your tongue is on a slow waterslide. It glides down and out, never rushing or jamming.",
+    prompt:"'Sss— (slow slide!) —snakes slither silently through sun-speckled shade.' (Feel the smooth waterslide on every S!)" },
+  { day:11, title:"The Ready Position", tag:"Preparation",
+    strategy:"Before a tricky word, take a tiny moment to get your mouth ready — like a sprinter in position before the race. A ready mouth speaks smoothly!",
+    prompt:"Practice getting ready: look at each word → mouth shape it silently → then say it aloud with a smooth, easy beginning." },
+  { day:12, title:"The Brave Freeze Game", tag:"Confidence",
+    strategy:"Be SO brave that you can freeze on a sound ON PURPOSE for 3 whole seconds. When you can freeze on command, the freeze loses all its power over you!",
+    prompt:"Pick any sound (like 'ssss' or 'mmm') and freeze on it for 3 seconds on purpose, then continue your word easily. You're in charge!" },
+  { day:13, title:"My Word Adventure Map", tag:"Confidence",
+    strategy:"Make a mental map of words that feel easy and words that feel adventurous. We start easy and work toward brave, adventurous words — like a treasure hunt!",
+    prompt:"Say 3 easy words, then 2 medium words, then 1 adventurous word. Use Turtle Talk and Feather Touch on every single one!" },
+  { day:14, title:"The Invisible Friend Call", tag:"Real World",
+    strategy:"Pretend you're calling your best invisible friend on a magic phone. Because it's your friend, your voice feels easy and safe — no pressure, just fun talking!",
+    prompt:"Role-play: 'Hey! It's me! I just called to say hello and tell you about the super cool thing that happened to me today. Guess what?!'" },
+  { day:15, title:"Real World Quest 1", tag:"Adventure",
+    strategy:"Today's mission: use your Turtle Talk and Magic Bubble Breaths in a REAL conversation outside this app. You're a fluency adventurer on a real quest!",
+    prompt:"Mission: Say 'hello' and one other sentence to a real person today using Turtle Talk. Come back tomorrow as a victorious adventurer!" },
+  { day:16, title:"The Freeze & Shake Game", tag:"Release",
+    strategy:"If a word gets stuck, freeze! Then shake your hands out like a wet puppy, relax your tummy muscles, and let the word slide out easy-peasy!",
+    prompt:"'Sss— (Freeze! Shake hands! Relax tummy!) —super shiny stars sparkle brightly in the big dark space above us all!'" },
+  { day:17, title:"Story Time Read-Aloud", tag:"Reading",
+    strategy:"Reading out loud is secret fluency training! Read slowly, give every word space, and use your Turtle pace and Feather touch through the whole story.",
+    prompt:"Read slowly: 'Once upon a time, in a land where every creature spoke with the most careful, beautiful, smooth and gentle voice imaginable…'" },
+  { day:18, title:"The 2-Minute Brave Talk", tag:"Confidence",
+    strategy:"Talk for 2 whole minutes about ANYTHING you love — your favourite game, animal, food, show, anything! Use your tools. No stopping for anything!",
+    prompt:"Set a 2-minute timer. Talk freely about: 'My favourite adventure (real or imaginary).' Turtle Talk + Bubble Breaths the whole time!" },
+  { day:19, title:"The Brain Busy Challenge", tag:"Advanced",
+    strategy:"Counting backwards from 20 while talking is a superpower challenge. It makes your brain work extra hard AND keeps your voice smooth. Elite level!",
+    prompt:"Count backwards from 20 in your head while saying: 'Even when my brain is very busy, my voice stays calm and smooth and easy.'"},
+  { day:20, title:"The Interruption Recovery", tag:"Advanced",
+    strategy:"Real conversations get interrupted! Practice stopping, breathing, and restarting smoothly from any point. Recovery is a skill, not a failure!",
+    prompt:"Have someone (or an alarm) interrupt you mid-sentence. Stop. Breathe. Smile. Then restart from the nearest pause point, smooth and easy." },
+  { day:21, title:"Speed Dial: Natural Mode", tag:"Naturalness",
+    strategy:"Start dialing back the super-slow speed — keep Feather Touch and Bubble Breaths but speak a little more like natural you. Real fluency sounds natural!",
+    prompt:"Say this at close-to-natural speed: 'Good morning! What a great day to practice speaking in the most easy and natural way possible!'" },
+  { day:22, title:"Fast, Medium, Slow Laps", tag:"Naturalness",
+    strategy:"Race cars can drive in every gear. YOUR voice can speak in slow, medium, and fast gear too — with smooth fluency in every single one!",
+    prompt:"Say this in slow, then medium, then near-fast: 'Every word I say is mine and I am in control of how it comes out of my mouth!'" },
+  { day:23, title:"The Feelings Voice", tag:"Expression",
+    strategy:"Happy words, surprised words, silly words — our voice changes with feeling! Practice using smooth technique even when your voice gets excited or big.",
+    prompt:"Say 'WOW! I cannot BELIEVE how amazing that is!' — excited volume, but still using Feather Touch and a smooth, connected airstream underneath." },
+  { day:24, title:"The Brave Group Mission", tag:"Real World",
+    strategy:"Imagine 10 friends sitting in front of you. Stand up tall, look at an imaginary audience, and speak to ALL of them with your full, confident voice!",
+    prompt:"Stand up! Look forward! Announce: 'Hello, everyone! Today I want to share something important with you. My voice is getting stronger every single day!'" },
+  { day:25, title:"Real Quest: Phone Adventure", tag:"Real World",
+    strategy:"Make a real phone call using your full toolkit — script it first, rehearse it here, then do it for real. This is a MAJOR fluency milestone!",
+    prompt:"Script a short real call (ask a question, check a time). Write it here first. Rehearse 3 times. Then make the call. You are 100% ready!" },
+  { day:26, title:"The Feelings Under Pressure", tag:"Advanced",
+    strategy:"Talking about things we REALLY care about can make our voice feel different. Practice staying smooth even when your heart is full of big feelings.",
+    prompt:"Talk for 90 seconds about something you love deeply — a person, place, or dream. Let the feelings be there AND keep the smooth tools active!" },
+  { day:27, title:"Free Conversation Quest", tag:"Real World",
+    strategy:"Today's whole mission is OFF this app. Have a real 5-minute conversation with anyone, about anything, using your tools. Then come back and tell us how it felt!",
+    prompt:"Off-screen adventure! Find someone to chat with for 5 minutes. ANY topic. When you return, log how it felt: easy, medium, or adventurous?" },
+  { day:28, title:"My Fluency Shield", tag:"Maintenance",
+    strategy:"Every great adventurer has a shield. YOUR fluency shield has 3 powers on it — your 3 best tools. Name them, claim them, they're yours forever.",
+    prompt:"Name your 3 favourite tools aloud: 'My three fluency superpowers are: (1)___, (2)___, and (3)___. I will use them every day forever!'" },
+  { day:29, title:"The Celebration Speech", tag:"Reflection",
+    strategy:"You have done something truly AMAZING. Today you get to look back and feel proud. Your voice grew. You grew. This is worth celebrating!",
+    prompt:"Say out loud: 'On Day 1 I felt… (pause) Now on Day 29 I feel… (pause) The superpower I am most proud of is…' Take your time. You earned this." },
+  { day:30, title:"The Brave Story Explorer", tag:"Mastery",
+    strategy:"You are now a full Fluency Explorer! Use ALL your tools — Turtle Talk, Bubble Breath, Feather Touch, Slow Slides — and tell your greatest adventure story yet!",
+    prompt:"Tell your best story: An astronaut, a dragon, a time traveller — any hero you choose — who found their voice and used it to save the day. Go!" }
+];
 
-            // Disconnect baseline processing map to restructure cleanly
-            micSource.disconnect();
-            delayNode.disconnect();
-            feedbackNode.disconnect();
-            biquadFilter.disconnect();
+// ─── STATE ────────────────────────────────────────────────────────────────
+let isKidsMode    = false;
+let currentMode   = 'daf';
+let activeDay     = null;
+let isRunning     = false;
+let completedDays = new Set();
+let kidsXP        = 0;
+let kidsStars     = 0;
 
-            // Reroute pipelines adaptively based on selected tracking protocol
-            if (mode === 'daf') {
-                label.innerHTML = `DAF Buffer Delay: <span id="param-val">${sliderVal}</span> ms`;
-                delayNode.delayTime.setValueAtTime(sliderVal / 1000, audioCtx.currentTime);
-                
-                micSource.connect(delayNode);
-                delayNode.connect(audioCtx.destination);
-                micSource.connect(analyser); // parallel extraction for graph
-            } 
-            else if (mode === 'faf') {
-                label.innerHTML = `Pitch Scaling Factor: <span id="param-val">${sliderVal}</span> Hz Shift`;
-                // Emulate frequency shift via high-order localized resonant notch peaks
-                biquadFilter.type = "peaking";
-                biquadFilter.frequency.setValueAtTime(sliderVal * 4, audioCtx.currentTime);
-                biquadFilter.Q.setValueAtTime(12, audioCtx.currentTime);
-                biquadFilter.gain.setValueAtTime(15, audioCtx.currentTime);
+// Web Audio
+let audioCtx, micSource, analyser, delayNode, biquadFilter, phasorNode;
+let animFrameId;
 
-                micSource.connect(biquadFilter);
-                biquadFilter.connect(audioCtx.destination);
-                biquadFilter.connect(analyser);
-            }
-            else if (mode === 'binaural') {
-                label.innerHTML = `Masking White Noise Intensity: <span id="param-val">${sliderVal}</span>%`;
-                // Emulate localized pink/white noise mask gating via lowpass
-                biquadFilter.type = "lowpass";
-                biquadFilter.frequency.setValueAtTime(600 + (sliderVal * 10), audioCtx.currentTime);
-                
-                micSource.connect(biquadFilter);
-                biquadFilter.connect(audioCtx.destination);
-                micSource.connect(analyser);
-            }
-            else {
-                label.innerHTML = `Hardware Bypass Active`;
-                micSource.connect(audioCtx.destination);
-                micSource.connect(analyser);
-            }
-        }
+// Speech Recognition
+let recognition, isRecognizing = false, recognitionBuffer = '';
 
-        function setupVisualizer() {
-            const canvas = document.getElementById('visualizer');
-            const canvasCtx = canvas.getContext('2d');
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+// ─── INIT ─────────────────────────────────────────────────────────────────
+window.onload = () => {
+  buildStarRow();
+  renderCurriculum();
+  drawIdleVisualizer();
+};
 
-            function draw() {
-                animationFrameId = requestAnimationFrame(draw);
-                analyser.getByteFrequencyData(dataArray);
+// ─── CURRICULUM ──────────────────────────────────────────────────────────
+function renderCurriculum() {
+  const list  = document.getElementById('curriculum-list');
+  const data  = isKidsMode ? kidsCurriculum : adultCurriculum;
+  list.innerHTML = '';
 
-                canvasCtx.fillStyle = '#020617';
-                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+  data.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'day-card panel-transition' + (completedDays.has(item.day) ? ' completed' : '') + (activeDay === item.day ? ' active' : '');
+    div.onclick = () => selectDay(item.day);
+    div.innerHTML = `
+      <div class="day-header">
+        <span class="day-num">${isKidsMode ? '🗓️ ' : ''}Day ${item.day}</span>
+        ${completedDays.has(item.day) ? '<span class="day-badge done">✓ Done</span>' : `<span class="day-badge" style="color:var(${isKidsMode?'--k-text-3':'--text-3'});font-size:0.65rem;">${item.tag}</span>`}
+      </div>
+      <div class="day-title-text">${item.title}</div>
+      <div class="day-subtitle">${item.strategy.substring(0, 72)}…</div>
+    `;
+    list.appendChild(div);
+  });
+}
 
-                const barWidth = (canvas.width / bufferLength) * 2.5;
-                let barHeight;
-                let x = 0;
+function selectDay(dayNum) {
+  const data   = isKidsMode ? kidsCurriculum : adultCurriculum;
+  const item   = data.find(d => d.day === dayNum);
+  if (!item) return;
+  activeDay = dayNum;
+  renderCurriculum();
+  renderPromptPanel(item);
+  // Scroll card into view
+  const cards = document.querySelectorAll('.day-card');
+  const idx   = data.findIndex(d => d.day === dayNum);
+  if (cards[idx]) cards[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
-                for (let i = 0; i < bufferLength; i++) {
-                    barHeight = dataArray[i]/1.5;
-                    // Dynamic coloring depending on tracking thresholds
-                    canvasCtx.fillStyle = isKidsMode ? `rgb(245, ${158 - barHeight}, 11)` : `rgb(56, 189, ${248 + barHeight})`;
-                    canvasCtx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
-                    x += barWidth;
-                }
-            }
-            draw();
-        }
+// ─── PROMPT PANEL ─────────────────────────────────────────────────────────
+function renderPromptPanel(item) {
+  const panel = document.getElementById('prompt-panel');
+  const promptWords = item.prompt.split(' ').map((w, i) =>
+    `<span class="stt-word" data-word="${w.replace(/[^a-z']/gi,'').toLowerCase()}" id="pw-${i}">${w}</span>`
+  ).join(' ');
 
-        // Initialize Workspace Defaults
-        window.onload = loadCurriculum;
-    </script>
+  panel.innerHTML = `
+    <div class="track-bar fade-in">
+      <div class="track-pill" id="track-pill">${isKidsMode ? '🌟 Kids Adventure Track' : '🧠 Adult Clinical Track'}</div>
+      <div>
+        <div class="track-title">Day ${item.day}: ${item.title}</div>
+      </div>
+      <div class="track-desc" style="margin-top:0.3rem;">Tag: <strong>${item.tag}</strong></div>
+    </div>
+
+    <div class="strategy-card fade-in" style="animation-delay:0.05s">
+      <div class="strat-eyebrow">${isKidsMode ? '🎯 Your Mission Strategy' : '⚕️ Clinical Strategy'}</div>
+      <div class="strat-text">${item.strategy}</div>
+    </div>
+
+    <div class="practice-card fade-in" style="animation-delay:0.1s">
+      <div class="practice-top">
+        <span class="practice-label">${isKidsMode ? '🎙️ Practice Time!' : 'Active Practice Prompt'}</span>
+        <div class="practice-actions">
+          <button class="icon-btn" title="Mark complete" onclick="markComplete(${item.day})">✅</button>
+          <button class="icon-btn" title="Reset STT highlighting" onclick="resetSTTHighlight()">↺</button>
+        </div>
+      </div>
+      <div id="prompt-text">${promptWords}</div>
+    </div>
+
+    <div class="stt-prompt-hint ${isRunning ? 'active' : ''}" id="stt-hint">
+      ${isRunning ? '🎙 Speech recognition active — spoken words will highlight in real time' : '💡 Start the audio engine to activate real-time speech word tracking'}
+    </div>
+
+    <div class="metrics-row fade-in" style="animation-delay:0.15s">
+      <div class="metric-card">
+        <div class="metric-label">Session</div>
+        <div class="metric-val" id="metric-day">D${item.day}</div>
+        <div class="metric-unit">of 30</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Completed</div>
+        <div class="metric-val" id="metric-done">${completedDays.size}</div>
+        <div class="metric-unit">sessions</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Protocol</div>
+        <div class="metric-val" id="metric-proto" style="font-size:1rem;">${currentMode.toUpperCase()}</div>
+        <div class="metric-unit">active</div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── PROTOCOL CONTROL ─────────────────────────────────────────────────────
+const protocolConfig = {
+  daf:      { label: 'DAF Buffer Delay',     unit: 'ms',  min: 20,  max: 300, step: 5,  def_adult: 100, def_kids: 140 },
+  faf:      { label: 'Pitch Shift Factor',   unit: 'Hz',  min: 50,  max: 800, step: 10, def_adult: 200, def_kids: 200 },
+  binaural: { label: 'Masking Intensity',    unit: '%',   min: 10,  max: 100, step: 5,  def_adult: 40,  def_kids: 30  },
+  bypass:   { label: 'Hardware Bypass',      unit: '',    min: 0,   max: 0,   step: 1,  def_adult: 0,   def_kids: 0   }
+};
+
+function setProtocol(btn) {
+  document.querySelectorAll('.protocol-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentMode = btn.dataset.mode;
+  applyProtocolUI();
+  if (isRunning) rebuildGraph();
+  updateMetricProto();
+}
+
+function applyProtocolUI() {
+  const cfg = protocolConfig[currentMode];
+  const slider = document.getElementById('param-slider');
+  const label  = document.getElementById('ctrl-label');
+  const val    = document.getElementById('ctrl-val');
+  label.textContent = cfg.label;
+  slider.min  = cfg.min;
+  slider.max  = cfg.max;
+  slider.step = cfg.step;
+  const defVal = isKidsMode ? cfg.def_kids : cfg.def_adult;
+  slider.value = defVal;
+  val.textContent = cfg.unit ? `${defVal} ${cfg.unit}` : 'Active';
+}
+
+function onSliderChange(v) {
+  const cfg = protocolConfig[currentMode];
+  document.getElementById('ctrl-val').textContent = cfg.unit ? `${v} ${cfg.unit}` : 'Active';
+  if (isRunning) rebuildGraph();
+}
+
+function updateMetricProto() {
+  const el = document.getElementById('metric-proto');
+  if (el) el.textContent = currentMode.toUpperCase();
+}
+
+// ─── ENGINE ───────────────────────────────────────────────────────────────
+async function toggleEngine() {
+  if (isRunning) {
+    stopEngine();
+  } else {
+    await startEngine();
+  }
+}
+
+async function startEngine() {
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, latency: 0.003 }
+    });
+    micSource = audioCtx.createMediaStreamSource(stream);
+    analyser  = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+
+    delayNode    = audioCtx.createDelay(1.0);
+    biquadFilter = audioCtx.createBiquadFilter();
+
+    rebuildGraph();
+    startVisualizer();
+    startSTT();
+
+    isRunning = true;
+    updateEngineUI(true);
+  } catch(e) {
+    alert('Microphone access required. ' + e.message);
+  }
+}
+
+function stopEngine() {
+  if (audioCtx) { audioCtx.close(); audioCtx = null; }
+  cancelAnimationFrame(animFrameId);
+  stopSTT();
+  isRunning = false;
+  updateEngineUI(false);
+  drawIdleVisualizer();
+}
+
+function updateEngineUI(running) {
+  const btn   = document.getElementById('engine-btn');
+  const badge = document.getElementById('engine-badge');
+  const dot   = document.getElementById('badge-dot');
+  const blbl  = document.getElementById('badge-label');
+  const bicon = document.getElementById('engine-btn-icon');
+  const blab  = document.getElementById('engine-btn-label');
+  const hint  = document.getElementById('stt-hint');
+
+  if (running) {
+    btn.classList.add('running');
+    bicon.textContent = '⏹';
+    blab.textContent  = 'Stop Engine';
+    badge.classList.add('live');
+    blbl.textContent  = 'Engine Live';
+    if (hint) { hint.textContent = '🎙 Speech recognition active — spoken words will highlight in real time'; hint.classList.add('active'); }
+  } else {
+    btn.classList.remove('running');
+    bicon.textContent = '⚡';
+    blab.textContent  = 'Initialize Engine';
+    badge.classList.remove('live');
+    blbl.textContent  = 'Engine Offline';
+    if (hint) { hint.textContent = '💡 Start the audio engine to activate real-time speech word tracking'; hint.classList.remove('active'); }
+  }
+}
+
+function rebuildGraph() {
+  if (!audioCtx) return;
+  const sliderVal = parseFloat(document.getElementById('param-slider').value);
+
+  // Disconnect all
+  try { micSource.disconnect(); } catch(e){}
+  try { delayNode.disconnect(); } catch(e){}
+  try { biquadFilter.disconnect(); } catch(e){}
+
+  if (currentMode === 'daf') {
+    delayNode.delayTime.setValueAtTime(sliderVal / 1000, audioCtx.currentTime);
+    micSource.connect(delayNode);
+    delayNode.connect(audioCtx.destination);
+    micSource.connect(analyser);
+  }
+  else if (currentMode === 'faf') {
+    // Phase vocoder approximation via pitched biquad resonance cascade
+    biquadFilter.type = 'peaking';
+    biquadFilter.frequency.setValueAtTime(sliderVal, audioCtx.currentTime);
+    biquadFilter.Q.setValueAtTime(15, audioCtx.currentTime);
+    biquadFilter.gain.setValueAtTime(18, audioCtx.currentTime);
+    micSource.connect(biquadFilter);
+    biquadFilter.connect(audioCtx.destination);
+    biquadFilter.connect(analyser);
+  }
+  else if (currentMode === 'binaural') {
+    const intensity = sliderVal / 100;
+    biquadFilter.type = 'lowpass';
+    biquadFilter.frequency.setValueAtTime(400 + intensity * 1200, audioCtx.currentTime);
+    biquadFilter.Q.setValueAtTime(0.5, audioCtx.currentTime);
+    micSource.connect(biquadFilter);
+    biquadFilter.connect(audioCtx.destination);
+    micSource.connect(analyser);
+  }
+  else {
+    micSource.connect(audioCtx.destination);
+    micSource.connect(analyser);
+  }
+}
+
+// ─── VISUALIZER ──────────────────────────────────────────────────────────
+function startVisualizer() {
+  const canvas = document.getElementById('visualizer');
+  const ctx    = canvas.getContext('2d');
+  const bufLen = analyser.frequencyBinCount;
+  const data   = new Uint8Array(bufLen);
+
+  function draw() {
+    animFrameId = requestAnimationFrame(draw);
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    analyser.getByteFrequencyData(data);
+
+    if (isKidsMode) {
+      ctx.fillStyle = '#fff5e0';
+    } else {
+      ctx.fillStyle = '#07090f';
+    }
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const bw = (canvas.width / bufLen) * 2.2;
+    let x = 0;
+    for (let i = 0; i < bufLen; i++) {
+      const h = (data[i] / 255) * canvas.height * 0.9;
+      const pct = i / bufLen;
+      if (isKidsMode) {
+        const r = Math.round(255);
+        const g = Math.round(107 + pct * 100);
+        const b = Math.round(53 + data[i] * 0.3);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+      } else {
+        const r = Math.round(82 + pct * 80);
+        const g = Math.round(196 - pct * 60);
+        const b = 255;
+        ctx.fillStyle = `rgba(${r},${g},${b},${0.5 + (data[i]/255)*0.5})`;
+      }
+      ctx.fillRect(x, canvas.height - h, bw - 1, h);
+      x += bw;
+    }
+  }
+  draw();
+}
+
+function drawIdleVisualizer() {
+  const canvas = document.getElementById('visualizer');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = canvas.offsetWidth  || 300;
+  canvas.height = canvas.offsetHeight || 100;
+  ctx.fillStyle = isKidsMode ? '#fff5e0' : '#07090f';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Flat idle line
+  ctx.strokeStyle = isKidsMode ? 'rgba(255,107,53,0.2)' : 'rgba(82,196,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height / 2);
+  ctx.lineTo(canvas.width, canvas.height / 2);
+  ctx.stroke();
+}
+
+// ─── SPEECH RECOGNITION ──────────────────────────────────────────────────
+function startSTT() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('transcript-display').innerHTML =
+      '<span style="color:var(--text-3);font-size:0.72rem;">Speech recognition not supported in this browser (use Chrome).</span>';
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.continuous     = true;
+  recognition.interimResults = true;
+  recognition.lang           = 'en-US';
+  recognitionBuffer          = '';
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        recognitionBuffer += transcript + ' ';
+        highlightWords(recognitionBuffer);
+      } else {
+        interim = transcript;
+      }
+    }
+    const disp = document.getElementById('transcript-display');
+    if (disp) disp.innerHTML = `<span style="color:var(${isKidsMode?'--k-text-2':'--text-2'})">${recognitionBuffer}</span><span style="color:var(${isKidsMode?'--k-text-3':'--text-3'})">${interim}</span>`;
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error !== 'no-speech') {
+      const disp = document.getElementById('transcript-display');
+      if (disp) disp.innerHTML = `<span style="color:var(--danger);font-size:0.72rem;">Recognition error: ${e.error}</span>`;
+    }
+  };
+
+  recognition.onend = () => {
+    if (isRunning) recognition.start(); // auto-restart
+  };
+
+  recognition.start();
+  isRecognizing = true;
+}
+
+function stopSTT() {
+  if (recognition) { recognition.stop(); recognition = null; }
+  isRecognizing = false;
+  const disp = document.getElementById('transcript-display');
+  if (disp) disp.innerHTML = '<span style="color:var(--text-3);font-size:0.72rem;">Awaiting engine start…</span>';
+  recognitionBuffer = '';
+}
+
+function highlightWords(spokenText) {
+  const words = document.querySelectorAll('#prompt-text .stt-word');
+  if (!words.length) return;
+  const spoken = spokenText.toLowerCase().replace(/[^a-z\s']/g,'').split(/\s+/);
+  words.forEach(span => {
+    const w = span.dataset.word;
+    if (spoken.includes(w)) {
+      span.classList.add('spoken');
+    }
+  });
+}
+
+function resetSTTHighlight() {
+  recognitionBuffer = '';
+  document.querySelectorAll('#prompt-text .stt-word').forEach(s => {
+    s.classList.remove('spoken', 'flagged');
+  });
+  const disp = document.getElementById('transcript-display');
+  if (disp) disp.innerHTML = '<span style="color:var(--text-3);font-size:0.72rem;">Reset — speak again to re-track…</span>';
+}
+
+// ─── MODE TOGGLE ─────────────────────────────────────────────────────────
+function toggleMode() {
+  isKidsMode = !isKidsMode;
+  document.body.classList.toggle('kids-mode', isKidsMode);
+
+  document.getElementById('mode-btn-label').textContent = isKidsMode ? 'Adult Mode' : 'Kids Mode';
+  document.getElementById('mode-btn-icon').textContent  = isKidsMode ? '👔' : '🎨';
+  document.getElementById('logo-mark').textContent      = isKidsMode ? '⭐' : '🌊';
+
+  // Reset protocol defaults for new mode
+  applyProtocolUI();
+
+  // Rebuild
+  activeDay = null;
+  renderCurriculum();
+  drawIdleVisualizer();
+
+  // Reset prompt area
+  const panel = document.getElementById('prompt-panel');
+  panel.innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">${isKidsMode ? '🌟' : '🎙️'}</div>
+      <div style="font-weight:700; font-size:1rem;">${isKidsMode ? 'Pick your adventure, Explorer!' : 'Select a session to begin'}</div>
+      <div>${isKidsMode ? 'Choose a day from the 30-day Kids Journey on the left!' : 'Choose any day from the 30-day program in the sidebar.'}</div>
+    </div>`;
+
+  if (isRunning) rebuildGraph();
+}
+
+// ─── COMPLETION ──────────────────────────────────────────────────────────
+function markComplete(dayNum) {
+  completedDays.add(dayNum);
+  renderCurriculum();
+
+  if (isKidsMode) {
+    kidsXP = Math.min(kidsXP + 1, 10);
+    updateXPBar();
+    if (kidsXP % 2 === 0) earnStar();
+  }
+
+  const overlay = document.getElementById('complete-flash');
+  const icon    = document.getElementById('complete-icon');
+  const title   = document.getElementById('complete-title');
+  const sub     = document.getElementById('complete-sub');
+
+  if (isKidsMode) {
+    icon.textContent  = ['🌟','⭐','🏆','🎉','🦊','🚀','✨','🎊'][Math.floor(Math.random()*8)];
+    title.textContent = 'Amazing Explorer!';
+    sub.textContent   = `Day ${dayNum} complete! You earned XP! Keep going — you're on an adventure!`;
+  } else {
+    icon.textContent  = '✅';
+    title.textContent = 'Session Complete';
+    sub.textContent   = `Day ${dayNum} logged. Consistent practice compounds — keep the streak going.`;
+  }
+  overlay.classList.add('show');
+}
+
+function closeComplete() {
+  document.getElementById('complete-flash').classList.remove('show');
+}
+
+// ─── KIDS XP ─────────────────────────────────────────────────────────────
+function buildStarRow() {
+  const row = document.getElementById('star-row');
+  row.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.textContent = '⭐';
+    s.id = `star-${i}`;
+    row.appendChild(s);
+  }
+}
+
+function updateXPBar() {
+  document.getElementById('xp-fill').style.width = `${kidsXP * 10}%`;
+  document.getElementById('xp-label-val').textContent = `${kidsXP} / 10 pts`;
+}
+
+function earnStar() {
+  const star = document.getElementById(`star-${kidsStars}`);
+  if (star) { star.classList.add('earned'); kidsStars++; }
+}
+
+// ─── RESIZE VISUALIZER ───────────────────────────────────────────────────
+window.addEventListener('resize', () => { if (!isRunning) drawIdleVisualizer(); });
+</script>
 </body>
 </html>
