@@ -1,0 +1,73 @@
+Read and fully analyze all files inside the docs/ folder before making any changes, especially:
+- docs/current-state.md
+- docs/roadmap.md
+- docs/ai-rules.md
+- docs/feature-ideas.md
+
+Your task is to create the next major iterative upgrade of Fluency Studio based on the current project state, architecture, vision, and long-term direction documented in the project files.
+
+OBJECTIVE:
+Evolve the app into a more advanced, immersive, fluid, and technically sophisticated experience while preserving the emotional tone, futuristic atmosphere, mobile-first immersion, and resonance-inspired identity of the platform.
+
+GENERAL GOALS:
+- Improve immersion
+- Improve visual fluidity
+- Improve responsiveness
+- Improve rendering sophistication
+- Improve UI usability and interaction flow
+- Improve mobile landscape experience
+- Improve architectural organization
+- Expand the intelligence and adaptability of the system
+- Increase the technical sophistication of the application
+
+ADVANCED SYSTEM DIRECTION:
+Introduce one or more advanced computational systems or technically sophisticated features that elevate the platform beyond a standard visual web app.
+
+Potential directions include:
+- procedural harmonic field simulation
+- resonance-state engines
+- mathematically driven motion systems
+- adaptive interaction systems
+- lightweight physics-based environments
+- waveform analysis systems
+- data-driven animation systems
+- intelligent parameter modulation
+- advanced rendering behaviors
+- Python-assisted processing or simulation utilities if appropriate
+- computational visualization systems
+- modular simulation frameworks
+
+Use your own architectural judgment to determine which systems best fit the current state and future direction of the project.
+
+IMPLEMENTATION PRIORITIES:
+- Preserve immersive atmosphere
+- Preserve futuristic visual identity
+- Maintain responsive mobile behavior
+- Maintain scalability for future expansion
+- Improve long-term maintainability
+- Expand modular organization where appropriate
+- Improve experiential cohesion
+- Enhance interaction quality
+- Improve perceived sophistication and depth
+
+AFTER IMPLEMENTATION:
+Update the following documentation files to reflect the new state of the project:
+- docs/current-state.md
+- docs/roadmap.md
+- docs/feature-ideas.md
+- docs/ai-rules.md if architectural or workflow rules evolve
+
+Document:
+- new systems
+- new architecture
+- major changes
+- implementation rationale
+- known limitations
+- future opportunities
+- newly enabled upgrade paths
+
+Then provide a concise implementation summary describing:
+- what changed
+- what systems were added or redesigned
+- what files or modules were created or reorganized
+- what future development paths are now possible

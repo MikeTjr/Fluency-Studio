@@ -786,6 +786,198 @@
     }
     body.kids-mode footer { border-top-color: var(--k-border); color: var(--k-text-3); }
 
+    /* ─── HARMONIC FIELD CANVAS (v2.2) ──────────────────────────────── */
+    #harmonic-field {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      width: 100%; height: 100%;
+      opacity: 0.22;
+      transition: opacity 1s;
+    }
+    body.kids-mode #harmonic-field { opacity: 0.28; }
+
+    /* ─── NEURAL BRIDGE VISUALIZER (v2.2) ───────────────────────────── */
+    #neural-viz {
+      display: block;
+      width: 100%; height: 100%;
+      border-radius: 8px;
+    }
+    .viz-canvas-wrap {
+      width: 100%;
+      height: 140px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #07090f;
+      border: 1px solid var(--border);
+    }
+    body.kids-mode .viz-canvas-wrap { background: #120a04; border-color: var(--k-border); }
+
+    /* ─── BEAT RING (v2.2) ───────────────────────────────────────────── */
+    #beat-ring {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--accent);
+      flex-shrink: 0;
+      opacity: 0.3;
+      transition: opacity 0.1s;
+    }
+    #beat-ring.pulse {
+      animation: beat-pulse 0.35s cubic-bezier(0.2,0,0.4,1) forwards;
+    }
+    @keyframes beat-pulse {
+      0%   { opacity:0.3; transform:scale(1); box-shadow: 0 0 0 rgba(82,196,255,0); }
+      25%  { opacity:1;   transform:scale(1.35); box-shadow: 0 0 18px rgba(82,196,255,0.6); }
+      100% { opacity:0.3; transform:scale(1); }
+    }
+    body.kids-mode #beat-ring { border-color: var(--k-accent); }
+    body.kids-mode #beat-ring.pulse {
+      animation: beat-pulse-kids 0.35s cubic-bezier(0.2,0,0.4,1) forwards;
+    }
+    @keyframes beat-pulse-kids {
+      0%   { opacity:0.3; transform:scale(1); box-shadow:none; }
+      25%  { opacity:1;   transform:scale(1.35); box-shadow:0 0 18px rgba(255,107,53,0.6); }
+      100% { opacity:0.3; transform:scale(1); }
+    }
+
+    /* ─── DAY CARD ENHANCEMENTS (v2.2) ──────────────────────────────── */
+    .day-meta-row {
+      display: flex; align-items: center; gap: 0.35rem;
+      flex-wrap: wrap; margin-top: 0.3rem;
+    }
+    .scaffold-badge {
+      font-size: 0.6rem; font-family: var(--font-mono);
+      padding: 2px 6px; border-radius: 3px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      color: var(--text-3);
+    }
+    .scaffold-badge.scaffold-full    { border-color: rgba(82,196,255,0.25); color: var(--accent); }
+    .scaffold-badge.scaffold-reduced { border-color: rgba(255,186,8,0.25);  color: #ffba08; }
+    .scaffold-badge.scaffold-minimal { border-color: rgba(52,211,153,0.25); color: var(--accent-3); }
+    body.kids-mode .scaffold-badge   { font-family: var(--font-kids); font-size: 0.65rem; }
+    .bpm-pill {
+      font-size: 0.6rem; font-family: var(--font-mono);
+      color: var(--text-3); padding: 2px 5px;
+      background: var(--surface-3); border-radius: 3px;
+    }
+    .done-badge {
+      margin-left: auto; font-size: 0.72rem;
+      color: var(--accent-3); font-weight: 700;
+    }
+
+    /* ─── PROMPT PANEL COMPONENTS (v2.2) ────────────────────────────── */
+    .prompt-header { margin-bottom: 1.5rem; }
+    .prompt-meta-row {
+      display: flex; align-items: center; gap: 0.5rem;
+      flex-wrap: wrap; margin-bottom: 0.6rem;
+    }
+    .prompt-day-badge {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      background: rgba(82,196,255,0.1); border: 1px solid rgba(82,196,255,0.25);
+      color: var(--accent); padding: 3px 8px; border-radius: 4px;
+    }
+    body.kids-mode .prompt-day-badge { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.25); color: var(--k-accent); }
+    .prompt-title {
+      font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em;
+      color: var(--text); margin-bottom: 0.4rem; line-height: 1.2;
+    }
+    body.kids-mode .prompt-title { font-family: var(--font-kids); font-size: 1.4rem; }
+    .prompt-tag {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      color: var(--text-3); letter-spacing: 0.06em;
+    }
+    body.kids-mode .prompt-tag { font-family: var(--font-kids); }
+
+    .strategy-card, .practice-card {
+      background: rgba(13,17,23,0.75);
+      border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 1.4rem;
+      margin-bottom: 1rem;
+      backdrop-filter: blur(8px);
+    }
+    body.kids-mode .strategy-card, body.kids-mode .practice-card {
+      background: rgba(255,249,240,0.75);
+      border-color: var(--k-border);
+      border-radius: 18px;
+    }
+    .strategy-label, .practice-label {
+      font-family: var(--font-mono); font-size: 0.62rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-3); margin-bottom: 0.6rem;
+    }
+    body.kids-mode .strategy-label, body.kids-mode .practice-label {
+      font-family: var(--font-kids); font-size: 0.68rem; letter-spacing: 0;
+      text-transform: none; color: var(--k-text-3);
+    }
+    .strategy-text {
+      font-size: 0.9rem; line-height: 1.7; color: var(--text-2);
+    }
+    body.kids-mode .strategy-text { font-family: var(--font-kids); color: var(--k-text-2); font-size: 0.95rem; }
+    .practice-text {
+      font-size: 1.05rem; line-height: 1.75; color: var(--text);
+      font-style: italic; margin-bottom: 0.75rem;
+    }
+    body.kids-mode .practice-text { font-family: var(--font-kids); color: var(--k-text); font-size: 1.1rem; }
+    .stt-word { cursor: default; border-radius: 3px; transition: background 0.25s, color 0.25s; }
+    .stt-word.highlighted { background: rgba(82,196,255,0.18); color: var(--accent); }
+    body.kids-mode .stt-word.highlighted { background: rgba(255,107,53,0.15); color: var(--k-accent); }
+    .reset-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-mono); font-size: 0.68rem;
+      color: var(--text-3); transition: color var(--speed);
+    }
+    .reset-btn:hover { color: var(--text-2); }
+
+    .session-actions { margin-top: 0.5rem; }
+    .complete-btn {
+      padding: 0.85rem 2.2rem; border-radius: 30px; cursor: pointer;
+      background: rgba(52,211,153,0.1); border: 1px solid var(--accent-3);
+      color: var(--accent-3); font-family: var(--font-ui); font-size: 0.85rem; font-weight: 700;
+      transition: all var(--speed) var(--ease);
+    }
+    .complete-btn:hover { background: rgba(52,211,153,0.2); }
+    body.kids-mode .complete-btn {
+      background: rgba(255,107,53,0.1); border-color: var(--k-accent);
+      color: var(--k-accent); font-family: var(--font-kids); border-radius: 30px;
+      font-size: 1rem;
+    }
+    body.kids-mode .complete-btn:hover { background: rgba(255,107,53,0.2); }
+
+    .stt-status {
+      margin-top: 0.75rem;
+      font-family: var(--font-mono); font-size: 0.75rem;
+      color: var(--text-3); min-height: 1.2em;
+      transition: color 0.3s;
+    }
+    body.kids-mode .stt-status { font-family: var(--font-kids); color: var(--k-text-3); }
+
+    /* ─── MOBILE LANDSCAPE (v2.2) ────────────────────────────────────── */
+    #sidebar-toggle {
+      display: none;
+      position: fixed; top: 1rem; left: 1rem; z-index: 200;
+      background: rgba(13,17,23,0.9); border: 1px solid var(--border);
+      color: var(--text); padding: 0.4rem 0.7rem; border-radius: 8px;
+      cursor: pointer; font-size: 0.8rem; backdrop-filter: blur(10px);
+      transition: all var(--speed);
+    }
+    body.landscape-mobile #sidebar-toggle { display: block; }
+
+    @media (orientation: landscape) and (max-height: 500px) {
+      body.landscape-mobile main { grid-template-columns: 0 1fr; }
+      body.landscape-mobile .sidebar {
+        position: fixed; left: -340px; top: 0; bottom: 0; z-index: 150;
+        width: 340px; overflow-y: auto;
+        transition: left 0.3s var(--ease);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+      }
+      body.landscape-mobile .sidebar.mobile-open { left: 0; }
+      body.landscape-mobile header { padding: 0.5rem 1rem; }
+      body.landscape-mobile .prompt-title { font-size: 1.2rem; }
+      body.landscape-mobile .strategy-card, body.landscape-mobile .practice-card { padding: 0.9rem 1.1rem; }
+      body.landscape-mobile #harmonic-field { opacity: 0.35; }
+    }
+
+    /* ─── COMPLETE FLASH SHOW STATE ─────────────────────────────────── */
+    .complete-flash.show { opacity: 1; pointer-events: all; }
+
     /* ─── HEADPHONES MODAL ───────────────────────────────────────────── */
     .hp-modal {
       position: fixed; inset: 0; z-index: 500;
@@ -928,7 +1120,9 @@
 </head>
 <body>
 
+<canvas id="harmonic-field" aria-hidden="true"></canvas>
 <div class="bg-mesh"></div>
+<button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰ Menu</button>
 <div class="app-wrapper">
 
   <!-- ─── HEADER ──────────────────────────────────────────────────── -->
@@ -1040,18 +1234,21 @@
               <span class="ctrl-label" id="bpm-label">Tempo</span>
               <span class="ctrl-val" id="bpm-val">80 BPM</span>
             </div>
-            <input type="range" id="bpm-slider" min="40" max="140" step="5" value="80"
-              oninput="onBpmChange(this.value)" />
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.3rem;">
+              <input type="range" id="bpm-slider" min="40" max="140" step="5" value="80"
+                oninput="onBpmChange(this.value)" style="flex:1" />
+              <div id="beat-ring" title="Beat pulse indicator"></div>
+            </div>
           </div>
 
         </div>
       </div>
 
-      <!-- Visualizer -->
+      <!-- Neural Bridge Visualizer -->
       <div class="viz-wrap">
-        <div class="section-label">Biofeedback Monitor</div>
+        <div class="section-label">Neural Bridge Monitor</div>
         <div class="viz-canvas-wrap">
-          <canvas id="visualizer"></canvas>
+          <canvas id="neural-viz"></canvas>
         </div>
       </div>
 
@@ -1153,930 +1350,6 @@
 </div>
 
 
-<script>
-// ─── DATA ────────────────────────────────────────────────────────────────
-const adultCurriculum = [
-  { day:1,  title:"Gentle Vocal Onsets",         tag:"Foundation",     bpm:60,
-    strategy:"Begin each vowel-initial syllable with a quiet, breathy /h/ airstream. Let the vocal cords fold together softly, like two feathers touching rather than two palms clapping.",
-    prompt:"Practice this phrase: 'Over the horizon, the evening settles easily.' Notice how each word glides into the next without any hard beginnings." },
-  { day:2,  title:"Airflow Continuity",           tag:"Foundation",     bpm:60,
-    strategy:"Maintain a gentle, uninterrupted stream of air throughout each sentence. Think of your breath as a continuous river — never a series of ponds.",
-    prompt:"'Always allow an easy, open air current to carry each syllable along to the next one in every phrase.'" },
-  { day:3,  title:"Slow Articulatory Rate",       tag:"Pacing",         bpm:60,
-    strategy:"Halve your speaking rate intentionally. Touch each articulatory landmark — lips, tongue, teeth — with awareness and zero urgency.",
-    prompt:"'Moving… slowly… and… deliberately… is… not… weakness. It… is… precision.' (Full slow rate — 1 word per 2 seconds.)" },
-  { day:4,  title:"Easy Vowel Extension",         tag:"Pacing",         bpm:65,
-    strategy:"Stretch the nucleus vowel of each stressed syllable to 1.5× its natural length. The consonants can be brief; the vowel is the foundation.",
-    prompt:"'Liiight. Oooopen. Eaaasy. Flowing — each vowel becomes a long, comfortable room you can rest inside.'" },
-  { day:5,  title:"Light Articulatory Contact",   tag:"Precision",      bpm:65,
-    strategy:"All tongue-to-palate and lip closures should be feather-light. Imagine pressing two soap bubbles together without popping them.",
-    prompt:"'People passing pathways pause briefly before picking up pleasant, playful patterns once more.'" },
-  { day:6,  title:"Proprioceptive Awareness",     tag:"Precision",      bpm:65,
-    strategy:"Before speaking, do a silent body scan: relax jaw, lower shoulders, unclench hands. Speech begins in the body, not just the mouth.",
-    prompt:"Close eyes, scan body, breathe in, exhale — then speak: 'I am calm, clear, and in control of my voice.'" },
-  { day:7,  title:"Phrase Boundary Breathing",    tag:"Structure",      bpm:70,
-    strategy:"Insert a gentle breath pause at every comma and period. Never push past a natural breath boundary in search of fluency.",
-    prompt:"'The summit, (breath) while distant, (breath) remains within reach. (breath) One measured step, (breath) then another.'" },
-  { day:8,  title:"Prolonged Vowel Stretching",   tag:"Shaping",        bpm:70,
-    strategy:"Double down on vowel prolongation. Practice the 'stretched slingshot': pull vowels long, then release consonants smoothly without snapping them forward.",
-    prompt:"'L-i-i-g-h-t-l-y touching the keys. M-a-a-k-i-n-g each word flow continuously into the very next phrase sequence.'" },
-  { day:9,  title:"Cancellation Practice",        tag:"Modification",   bpm:70,
-    strategy:"When a disfluency occurs, finish the word, pause, then consciously reattempt it using a gentle onset. No punishment — only revision.",
-    prompt:"Read aloud. If a stutter occurs, pause fully, breathe, then say the word again slowly and smoothly before continuing." },
-  { day:10, title:"Pull-Out Technique",            tag:"Modification",   bpm:75,
-    strategy:"When you feel a block starting, do not force through it. Consciously slow your articulatory movement, drop jaw tension, and ease out the back end of the word.",
-    prompt:"'S—— (feel tension, relax jaw, ease out) —sliding smoothly into the baseline of every spoken word structure.'" },
-  { day:11, title:"Preparatory Sets",              tag:"Modification",   bpm:75,
-    strategy:"Before a feared word, mentally pre-shape the articulators into a gentle, relaxed configuration. 'Set up' the easy production before speaking.",
-    prompt:"Preview each underlined word silently: 'Confidence comes from consistent, careful, conscious daily practice.'" },
-  { day:12, title:"Freezing and Holding",          tag:"Desensitization",bpm:75,
-    strategy:"On purpose, enter a voluntary stutter. Hold it for 3 seconds. Study it objectively. Then exit smoothly. Remove its power by examining it.",
-    prompt:"Select any word and intentionally prolong its first sound for 3 full seconds, then release calmly and continue reading." },
-  { day:13, title:"Feared Word Hierarchy",         tag:"Desensitization",bpm:80,
-    strategy:"List words from least to most feared. Practice each one, starting with easy ones, moving toward your top-five feared words.",
-    prompt:"Speak 5 words from your personal difficulty list, using gentle onset and pull-out on every one, regardless of fluency outcome." },
-  { day:14, title:"Telephone Simulation",          tag:"Application",    bpm:80,
-    strategy:"Simulate a phone call scenario. Phone calls remove visual cues, increasing anxiety. Apply full toolkit: onset, pacing, and breathing.",
-    prompt:"Role-play: 'Hello, this is (name). I am calling to (reason). Could you please (request)? Thank you for your time.'" },
-  { day:15, title:"Situational Transfer — Low Stress", tag:"Transfer",  bpm:80,
-    strategy:"Apply all techniques in a low-stakes real-world interaction: ordering coffee, greeting a neighbor, reading aloud to a friend.",
-    prompt:"Script a real interaction you'll have today. Write it out, rehearse it here, then execute it. Report back tomorrow." },
-  { day:16, title:"Active Mid-Block Pull-Outs",    tag:"Modification",   bpm:85,
-    strategy:"When you encounter a block mid-word, do not force forward. Slow down, consciously drop your lower jaw tension, and glide through the rest.",
-    prompt:"'S———(catch tension, open jaw, drop pressure)——sliding smoothly down into the baseline of each word structure.'" },
-  { day:17, title:"Reading Aloud — Slow Pace",    tag:"Pacing",         bpm:85,
-    strategy:"Read any paragraph at half your natural speed with sustained gentle onsets. Record yourself and compare to yesterday's recording.",
-    prompt:"Read the following at deliberate, slow pace: 'The art of fluent speech is not speed — it is the seamless connection between intention and sound.'" },
-  { day:18, title:"Monologue Practice",            tag:"Application",    bpm:85,
-    strategy:"Speak unscripted for 2 minutes about any topic. Apply all techniques simultaneously. Fluency is secondary — technique is primary.",
-    prompt:"Speak freely for 2 minutes about: 'A place I find peaceful.' Focus on airflow and gentle onsets throughout." },
-  { day:19, title:"Cognitive Load Resistance",     tag:"Advanced",       bpm:90,
-    strategy:"Maintain technique while counting backwards from 100 in 7s in your head as you speak. This mimics real-world cognitive interference.",
-    prompt:"While counting backwards by 7 mentally: 'I maintain conscious control over my speech mechanisms regardless of mental load.'" },
-  { day:20, title:"Partner Interruption Drill",    tag:"Advanced",       bpm:90,
-    strategy:"Have a partner or record yourself, then replay and interrupt playback randomly. Resume smoothly using preparatory sets.",
-    prompt:"Practice recovery: If interrupted mid-sentence, pause fully, reset breath, then resume from a natural phrase boundary — never force." },
-  { day:21, title:"Naturalness Integration",       tag:"Naturalness",    bpm:90,
-    strategy:"Begin reducing over-extension. Move toward natural prosody while maintaining zero hard contacts and gentle onsets.",
-    prompt:"Read this at natural pace with only gentle onset and airflow as active tools: 'Good morning. The weather looks clear and bright today.'" },
-  { day:22, title:"Rate Modulation",               tag:"Naturalness",    bpm:95,
-    strategy:"Practice speaking at slow, medium, and fast rates — applying techniques at each. Real speech varies rate; your toolkit must transfer across speeds.",
-    prompt:"Say this sentence at 3 different speeds. Slow: 5 sec. Medium: 3 sec. Fast: 2 sec: 'Every word I speak is mine to shape and own.'" },
-  { day:23, title:"Prosodic Stress Practice",      tag:"Naturalness",    bpm:95,
-    strategy:"Natural speech uses emphasis. Practice stressing different words in the same sentence while maintaining technique.",
-    prompt:"Stress each bold word in turn: 'I SPEAK with clarity.' / 'I speak WITH clarity.' / 'I speak with CLARITY.'" },
-  { day:24, title:"Group Simulation",              tag:"Transfer",       bpm:95,
-    strategy:"Simulate speaking to a group — stand up, project, maintain eye contact with a fixed point. Apply your full toolkit at normal volume.",
-    prompt:"Deliver this as if addressing 10 people: 'I want to share something important. (pause) I have been working on my voice, and today it belongs to me.'" },
-  { day:25, title:"Phone — High Stakes Drill",     tag:"Transfer",       bpm:100,
-    strategy:"Make one real phone call using full technique. Script it beforehand. Your first fluency transfer beyond the therapy room.",
-    prompt:"Script a real call (appointment, question, check-in). Write it, rehearse it here, then make the call. You are ready." },
-  { day:26, title:"Emotional Speech Under Load",   tag:"Advanced",       bpm:100,
-    strategy:"Practice speaking on emotionally charged topics. Emotion activates the neural loop most strongly. Technique must hold under feeling.",
-    prompt:"Talk for 90 seconds about something you genuinely care about. Apply full toolkit. Feel and speak simultaneously — this is mastery." },
-  { day:27, title:"Spontaneous Conversation Drill",tag:"Advanced",       bpm:100,
-    strategy:"Engage someone in a 5-minute spontaneous conversation — no script, no agenda. Apply techniques, but prioritize connection over perfection.",
-    prompt:"Today's assignment is off-screen. Find a real conversation. Your only job is gentle onset and sustained airflow. Report how it felt." },
-  { day:28, title:"Relapse Prevention Map",        tag:"Maintenance",    bpm:100,
-    strategy:"Identify your three highest-risk situations. Build an explicit micro-plan for each. Relapse is a data point, not a failure.",
-    prompt:"Write three personal high-risk scenarios and one technique response for each. Recite each scenario + response aloud, slowly and clearly." },
-  { day:29, title:"Reflection and Integration",    tag:"Maintenance",    bpm:100,
-    strategy:"Review your progress. Acknowledge what changed. Name two techniques you will carry permanently. Celebrate the work done.",
-    prompt:"Speak freely for 3 minutes: 'On Day 1 I was… Today I am… The one thing I will always carry with me is…'" },
-  { day:30, title:"Cognitive Noise Thresholds",    tag:"Mastery",        bpm:100,
-    strategy:"Maintain uninterrupted vocalization even when sensory disruptions, emotional noise, or external patterns challenge your focus. This is full integration.",
-    prompt:"'I maintain autonomous control over my physical speech mechanisms regardless of internal pressure or external environment. My voice is mine.'" }
-];
-
-const kidsCurriculum = [
-  { day:1,  title:"The Turtle Talk Journey",     tag:"Start Here!", bpm:55,
-    strategy:"Speak like a wise old turtle who never rushes. Give every single word its very own stepping stone. No word is in a hurry!",
-    prompt:"'The. fat. cat. sat. on. the. bright. orange. mat.' (Touch each word like a separate stepping stone across a pond!)" },
-  { day:2,  title:"Magic Bubble Breaths",        tag:"Breathing",   bpm:55,
-    strategy:"Before each sentence, blow out a tiny invisible magic bubble with your mouth. This sets up the perfect airflow for smooth, easy words!",
-    prompt:"Blow bubble → then say: 'I blew a big beautiful bubble that bounced over the bright blue bushes beyond the barn.'" },
-  { day:3,  title:"The Slow-Mo Superhero",       tag:"Pacing",      bpm:60,
-    strategy:"Slow-motion heroes are the most powerful! When we slow down our words, we give our voice superpowers of smoothness.",
-    prompt:"'Sloooow-moooo suuuuperherooooes saaave the daaaaay with caaaalm, cooooool confidence.' (Say it like you're in a movie slow-mo scene!)" },
-  { day:4,  title:"Stretchy Vowel Superpower",   tag:"Pacing",      bpm:60,
-    strategy:"Vowels (A, E, I, O, U) are like stretchy superpower bands. The longer you stretch them, the smoother your voice flows!",
-    prompt:"'Oooopen your mooouth wiiiide and leeeet the woooords fluuuuw out liiike a riiiiiver.' (Stretch those vowels like taffy!)" },
-  { day:5,  title:"The Feather Touch",           tag:"Precision",   bpm:65,
-    strategy:"Imagine your lips and tongue are holding a tiny feather between them — so gently that the feather never falls! That's how softly we touch sounds together.",
-    prompt:"'Pretty purple parrots pick perfectly placed purple petals every pleasant afternoon.' (Feather-light lips on every P!)" },
-  { day:6,  title:"The Body Reset Button",       tag:"Calm",        bpm:65,
-    strategy:"Before speaking, press your invisible reset button: wiggle your fingers, drop your shoulders, take a big belly breath. Now your voice is ready!",
-    prompt:"Wiggle hands → drop shoulders → big belly breath → then say: 'I am calm. I am ready. My words come out smooth and strong.'" },
-  { day:7,  title:"Story Stepping Stones",       tag:"Structure",   bpm:65,
-    strategy:"Every pause in a sentence is like a stepping stone. Jump from stone to stone — don't rush or you might fall in! Each pause is a safe rest spot.",
-    prompt:"'The dragon, (jump) who loved rainbows, (jump) flew high above the clouds, (jump) looking for the perfect gold treasure below.'" },
-  { day:8,  title:"The Magic Copycat Engine",    tag:"Listening",   bpm:70,
-    strategy:"Listen carefully to the small echo you hear in your headphones. Your voice and the echo are playing a copycat game. Match the rhythm — it smooths everything out!",
-    prompt:"'Bouncing bubbles blow big bright blue balloons beautifully.' (Copy the echo — stay with its rhythm like a dance partner!)" },
-  { day:9,  title:"The Word Redo Game",          tag:"Modification",bpm:70,
-    strategy:"If a word gets a little bumpy, that's okay! Just finish it, take a tiny pause, and try the word again smooth and easy. It's just a fun redo!",
-    prompt:"If any word feels bumpy during practice: stop, breathe, then say just that word again super-smoothly before continuing your sentence." },
-  { day:10, title:"The Slow Slide Trick",        tag:"Modification",bpm:70,
-    strategy:"When a word feels stuck, don't push — SLIDE! Imagine your tongue is on a slow waterslide. It glides down and out, never rushing or jamming.",
-    prompt:"'Sss— (slow slide!) —snakes slither silently through sun-speckled shade.' (Feel the smooth waterslide on every S!)" },
-  { day:11, title:"The Ready Position",          tag:"Preparation", bpm:75,
-    strategy:"Before a tricky word, take a tiny moment to get your mouth ready — like a sprinter in position before the race. A ready mouth speaks smoothly!",
-    prompt:"Practice getting ready: look at each word → mouth shape it silently → then say it aloud with a smooth, easy beginning." },
-  { day:12, title:"The Brave Freeze Game",       tag:"Confidence",  bpm:75,
-    strategy:"Be SO brave that you can freeze on a sound ON PURPOSE for 3 whole seconds. When you can freeze on command, the freeze loses all its power over you!",
-    prompt:"Pick any word and hold its first sound for 3 seconds on purpose — ssss, llll, mmmm — then slide right through it smoothly!" },
-  { day:13, title:"My Tricky Word List",         tag:"Courage",     bpm:75,
-    strategy:"Every great adventurer knows where the dragons live! Make a list of your tricky words, then practice them using all your superpowers — they're just dragons that haven't been tamed yet.",
-    prompt:"Say 5 of YOUR tricky words, one at a time. Use your Turtle Talk, Feather Touch, and Slow Slide on every single one!" },
-  { day:14, title:"The Phone Adventure",         tag:"Real World",  bpm:80,
-    strategy:"Phone calls are level-up challenges because you can't see the other person's face! Use ALL your tools: breathe, start soft, go slow.",
-    prompt:"Practice this phone script: 'Hello! This is (your name). I'm calling because I wanted to (reason). Could you please help me? Thank you!'" },
-  { day:15, title:"The Outside Mission",         tag:"Real World",  bpm:80,
-    strategy:"Today you go on a REAL WORLD mission! Pick one safe conversation outside this app and try your tools. Even one smooth sentence is a massive win!",
-    prompt:"Choose your mission: order something, ask a question, say hello to someone new. Then come back and tell the story of your adventure!" },
-  { day:16, title:"The Elastic Band Technique",  tag:"Shaping",     bpm:80,
-    strategy:"When a word tries to pop out too fast, imagine an elastic band holding it gently — it can still come out, just sloooowly and smoothly!",
-    prompt:"'Eeeelastic bands help slooow words reach their destination smooothly every single time.' (Elastic on every stressed word!)" },
-  { day:17, title:"Read It Slow-Mo",             tag:"Pacing",      bpm:85,
-    strategy:"Pick any book, any paragraph. Read it at HALF your normal speed. Feel how much easier the words come when they're not being rushed!",
-    prompt:"Read any 3 sentences from your favourite book right now — but in slow-motion superhero mode. Every word gets its own moment." },
-  { day:18, title:"The Story Explorer",          tag:"Adventure",   bpm:85,
-    strategy:"Tell a story about ANYTHING — a dream, a game, an adventure. Don't worry about perfect — just keep the words flowing like a river. Flow is the goal!",
-    prompt:"Tell a 2-minute story about: 'My favourite place in the whole world.' Use Turtle Talk and Bubble Breaths as you go!" },
-  { day:19, title:"Noisy Room Challenge",        tag:"Advanced",    bpm:85,
-    strategy:"Real life is loud! Practice today with some background noise on (music, TV) — so your brain learns to stay calm and smooth even when things get distracting.",
-    prompt:"With soft music playing: 'My voice stays smooth and strong even when things are busy and loud all around me.' (Full focus!)" },
-  { day:20, title:"The Surprise Interruption",   tag:"Advanced",    bpm:90,
-    strategy:"If you get interrupted, that's okay! Pause, breathe like a turtle, and start the sentence again from the beginning. Interruptions are just little detours, not dead ends.",
-    prompt:"Practice pausing + restarting: 'The most important thing I want to say is— (pause, breathe) — The most important thing I want to say is that I can do this!'" },
-  { day:21, title:"Natural Flow Mode",           tag:"Naturalness", bpm:90,
-    strategy:"Today is about sounding like YOU — not a turtle, not a superhero, just you. Use your tools quietly in the background, like a secret superpower nobody else can see.",
-    prompt:"Say the following at a natural, easy pace, just being you: 'Good morning. I had a great idea today. I think you're going to like it.'" },
-  { day:22, title:"Speed Level Up!",             tag:"Naturalness", bpm:90,
-    strategy:"Time to practice at DIFFERENT speeds — slow, medium, fast — like a video game with speed levels. You should be able to use your tools at ALL levels!",
-    prompt:"Say this sentence slow (5 sec), medium (3 sec), then fast (2 sec): 'Every word I say belongs to me and I say it well.'" },
-  { day:23, title:"The Feeling Speaker",         tag:"Expression",  bpm:95,
-    strategy:"When you speak with FEELING — excitement, happiness, silliness — your whole brain gets involved and stuttering takes a backseat! Let the feeling lead!",
-    prompt:"Say this with as much EXCITEMENT as possible: 'I just discovered the most amazing thing in the entire universe and I absolutely HAVE to tell you about it!'" },
-  { day:24, title:"The Stage Voice",             tag:"Transfer",    bpm:95,
-    strategy:"Imagine you're on a stage performing for 100 people. Stand tall, take a big breath, and speak like your voice fills the whole room. Big voice = confident brain!",
-    prompt:"Stand up! Say this to the room: 'I have something important to tell you. (pause) I have been learning how to use my voice. And it is getting stronger every day.'" },
-  { day:25, title:"The Real Phone Call",         tag:"Transfer",    bpm:95,
-    strategy:"This is the real thing! Make one actual phone call today — to a family member, a friend, anyone safe. Your toolkit is ready. You are ready.",
-    prompt:"Write out your phone script, rehearse it twice here, then MAKE THE CALL. When you come back: tell me how it went in the journal!" },
-  { day:26, title:"Heart Talk",                  tag:"Feelings",    bpm:100,
-    strategy:"Talk about something that truly matters to you — your pet, your favourite game, your best memory. When your heart is in it, your voice follows.",
-    prompt:"Tell me about something you love with your WHOLE heart — speak for 90 seconds without stopping. Let the love carry the words." },
-  { day:27, title:"Free Conversation Quest",     tag:"Real World",  bpm:100,
-    strategy:"Today's whole mission is OFF this app. Have a real 5-minute conversation with anyone, about anything, using your tools. Then come back and tell us how it felt!",
-    prompt:"Off-screen adventure! Find someone to chat with for 5 minutes. ANY topic. When you return, log how it felt: easy, medium, or adventurous?" },
-  { day:28, title:"My Fluency Shield",           tag:"Maintenance", bpm:100,
-    strategy:"Every great adventurer has a shield. YOUR fluency shield has 3 powers on it — your 3 best tools. Name them, claim them, they're yours forever.",
-    prompt:"Name your 3 favourite tools aloud: 'My three fluency superpowers are: (1)___, (2)___, and (3)___. I will use them every day forever!'" },
-  { day:29, title:"The Celebration Speech",      tag:"Reflection",  bpm:100,
-    strategy:"You have done something truly AMAZING. Today you get to look back and feel proud. Your voice grew. You grew. This is worth celebrating!",
-    prompt:"Say out loud: 'On Day 1 I felt… (pause) Now on Day 29 I feel… (pause) The superpower I am most proud of is…' Take your time. You earned this." },
-  { day:30, title:"The Brave Story Explorer",    tag:"Mastery",     bpm:100,
-    strategy:"You are now a full Fluency Explorer! Use ALL your tools — Turtle Talk, Bubble Breath, Feather Touch, Slow Slides — and tell your greatest adventure story yet!",
-    prompt:"Tell your best story: An astronaut, a dragon, a time traveller — any hero you choose — who found their voice and used it to save the day. Go!" }
-];
-
-// ─── STATE ────────────────────────────────────────────────────────────────
-let isKidsMode    = false;
-let currentMode   = 'daf';
-let activeDay     = null;
-let isRunning     = false;
-let completedDays = new Set();
-let kidsXP        = 0;
-let kidsStars     = 0;
-
-// Web Audio
-let audioCtx, micSource, analyser, delayNode, biquadFilter;
-let binauralMerger, binauralGainNode, leftOsc, rightOsc;
-let rhythmEnabled = false;
-let rhythmBPM     = 80;
-let rhythmTimer   = null;
-let rhythmNextBeat = 0;
-let animFrameId;
-
-// Speech Recognition
-let recognition, isRecognizing = false, recognitionBuffer = '';
-
-// ─── INIT ─────────────────────────────────────────────────────────────────
-window.onload = () => {
-  buildStarRow();
-  renderCurriculum();
-  drawIdleVisualizer();
-  loadJournalHistory();
-
-  // Show headphones warning on first visit
-  if (!localStorage.getItem('fs_hp_confirmed')) {
-    setTimeout(() => document.getElementById('hp-modal').classList.add('show'), 600);
-  }
-};
-
-function confirmHeadphones() {
-  localStorage.setItem('fs_hp_confirmed', '1');
-  document.getElementById('hp-modal').classList.remove('show');
-}
-
-// ─── CURRICULUM ──────────────────────────────────────────────────────────
-function scaffoldInfo(day) {
-  if (day <= 10) return { cls: 'full',    icon: '🔵', label: 'Full Scaffold'    };
-  if (day <= 20) return { cls: 'reduced', icon: '🟡', label: 'Reduced Scaffold' };
-  return              { cls: 'minimal', icon: '🟢', label: 'Minimal Scaffold'  };
-}
-
-function renderCurriculum() {
-  const list  = document.getElementById('curriculum-list');
-  const data  = isKidsMode ? kidsCurriculum : adultCurriculum;
-  list.innerHTML = '';
-
-  data.forEach((item) => {
-    const sf  = scaffoldInfo(item.day);
-    const div = document.createElement('div');
-    div.className = 'day-card panel-transition'
-      + (completedDays.has(item.day) ? ' completed' : '')
-      + (activeDay === item.day ? ' active' : '');
-    div.onclick = () => selectDay(item.day);
-    div.innerHTML = `
-      <div class="day-header">
-        <span class="day-num">${isKidsMode ? '🗓️ ' : ''}Day ${item.day}</span>
-        ${completedDays.has(item.day) ? '<span class="day-badge done">✓ Done</span>' : `<span class="day-badge" style="color:var(${isKidsMode?'--k-text-3':'--text-3'});font-size:0.65rem;">${item.tag}</span>`}
-      </div>
-      <div class="day-title-text">${item.title}</div>
-      <div class="day-subtitle">${item.strategy.substring(0, 72)}…</div>
-      <div class="scaffold-badge ${sf.cls}">${sf.icon} ${sf.label} · ${item.bpm} BPM</div>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function selectDay(dayNum) {
-  const data   = isKidsMode ? kidsCurriculum : adultCurriculum;
-  const item   = data.find(d => d.day === dayNum);
-  if (!item) return;
-  activeDay = dayNum;
-  renderCurriculum();
-  renderPromptPanel(item);
-
-  // Auto-set recommended BPM
-  rhythmBPM = item.bpm;
-  document.getElementById('bpm-slider').value = rhythmBPM;
-  document.getElementById('bpm-val').textContent = rhythmBPM + ' BPM';
-  if (rhythmEnabled && isRunning) restartRhythm();
-
-  // Scroll card into view
-  const cards = document.querySelectorAll('.day-card');
-  const idx   = data.findIndex(d => d.day === dayNum);
-  if (cards[idx]) cards[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// ─── PROMPT PANEL ─────────────────────────────────────────────────────────
-function renderPromptPanel(item) {
-  const panel = document.getElementById('prompt-panel');
-  const promptWords = item.prompt.split(' ').map((w, i) =>
-    `<span class="stt-word" data-word="${w.replace(/[^a-z']/gi,'').toLowerCase()}" id="pw-${i}">${w}</span>`
-  ).join(' ');
-  const sf = scaffoldInfo(item.day);
-
-  panel.innerHTML = `
-    <div class="track-bar fade-in">
-      <div class="track-pill" id="track-pill">${isKidsMode ? '🌟 Kids Adventure Track' : '🧠 Adult Clinical Track'}</div>
-      <div>
-        <div class="track-title">Day ${item.day}: ${item.title}</div>
-      </div>
-      <div class="track-desc" style="margin-top:0.3rem;">
-        <span style="opacity:0.7;">${item.tag}</span>
-        &nbsp;·&nbsp;
-        <span class="scaffold-badge ${sf.cls}" style="display:inline-flex;">${sf.icon} ${sf.label}</span>
-      </div>
-    </div>
-
-    <div class="strategy-card fade-in" style="animation-delay:0.05s">
-      <div class="strat-eyebrow">${isKidsMode ? '🎯 Your Mission Strategy' : '⚕️ Clinical Strategy'}</div>
-      <div class="strat-text">${item.strategy}</div>
-    </div>
-
-    <div class="practice-card fade-in" style="animation-delay:0.1s">
-      <div class="practice-top">
-        <span class="practice-label">${isKidsMode ? '🎙️ Practice Time!' : 'Active Practice Prompt'}</span>
-        <div class="practice-actions">
-          <button class="icon-btn" title="Mark complete" onclick="markComplete(${item.day})">✅</button>
-          <button class="icon-btn" title="Reset STT highlighting" onclick="resetSTTHighlight()">↺</button>
-        </div>
-      </div>
-      <div id="prompt-text">${promptWords}</div>
-    </div>
-
-    <div class="beat-bar ${rhythmEnabled && isRunning ? 'visible' : ''}" id="beat-bar">
-      <div class="beat-ring" id="beat-ring">${isKidsMode ? '🎵' : '♩'}</div>
-      <div class="beat-info">
-        <div class="beat-info-label">Rhythmic Entrainment Active</div>
-        <div class="beat-info-bpm" id="beat-bpm-display">${rhythmBPM} BPM</div>
-        <div class="beat-info-hint">Speak your words to the beat. Let the rhythm carry you.</div>
-      </div>
-    </div>
-
-    <div class="stt-prompt-hint ${isRunning ? 'active' : ''}" id="stt-hint">
-      ${isRunning ? '🎙 Speech recognition active — spoken words will highlight in real time' : '💡 Start the audio engine to activate real-time speech word tracking'}
-    </div>
-
-    <div class="metrics-row fade-in" style="animation-delay:0.15s">
-      <div class="metric-card">
-        <div class="metric-label">Session</div>
-        <div class="metric-val" id="metric-day">D${item.day}</div>
-        <div class="metric-unit">of 30</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Completed</div>
-        <div class="metric-val" id="metric-done">${completedDays.size}</div>
-        <div class="metric-unit">sessions</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Protocol</div>
-        <div class="metric-val" id="metric-proto" style="font-size:1rem;">${currentMode.toUpperCase()}</div>
-        <div class="metric-unit">active</div>
-      </div>
-    </div>
-  `;
-}
-
-// ─── PROTOCOL CONTROL ─────────────────────────────────────────────────────
-const protocolConfig = {
-  daf:      { label: 'DAF Buffer Delay',     unit: 'ms',  min: 20,  max: 300, step: 5,  def_adult: 100, def_kids: 140 },
-  faf:      { label: 'Pitch Shift Factor',   unit: 'Hz',  min: 50,  max: 800, step: 10, def_adult: 200, def_kids: 200 },
-  binaural: { label: 'Masking Intensity',    unit: '%',   min: 10,  max: 100, step: 5,  def_adult: 40,  def_kids: 30  },
-  bypass:   { label: 'Hardware Bypass',      unit: '',    min: 0,   max: 0,   step: 1,  def_adult: 0,   def_kids: 0   }
-};
-
-function setProtocol(btn) {
-  document.querySelectorAll('.protocol-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentMode = btn.dataset.mode;
-  applyProtocolUI();
-  if (isRunning) rebuildGraph();
-  updateMetricProto();
-}
-
-function applyProtocolUI() {
-  const cfg = protocolConfig[currentMode];
-  const slider = document.getElementById('param-slider');
-  const label  = document.getElementById('ctrl-label');
-  const val    = document.getElementById('ctrl-val');
-  label.textContent = cfg.label;
-  slider.min  = cfg.min;
-  slider.max  = cfg.max;
-  slider.step = cfg.step;
-  const defVal = isKidsMode ? cfg.def_kids : cfg.def_adult;
-  slider.value = defVal;
-  val.textContent = cfg.unit ? `${defVal} ${cfg.unit}` : 'Active';
-}
-
-function onSliderChange(v) {
-  const cfg = protocolConfig[currentMode];
-  document.getElementById('ctrl-val').textContent = cfg.unit ? `${v} ${cfg.unit}` : 'Active';
-  if (isRunning) rebuildGraph();
-}
-
-function updateMetricProto() {
-  const el = document.getElementById('metric-proto');
-  if (el) el.textContent = currentMode.toUpperCase();
-}
-
-// ─── ENGINE ───────────────────────────────────────────────────────────────
-async function toggleEngine() {
-  if (isRunning) {
-    stopEngine();
-  } else {
-    await startEngine();
-  }
-}
-
-async function startEngine() {
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, latency: 0.003 }
-    });
-    micSource = audioCtx.createMediaStreamSource(stream);
-    analyser  = audioCtx.createAnalyser();
-    analyser.fftSize = 512;
-
-    delayNode    = audioCtx.createDelay(1.0);
-    biquadFilter = audioCtx.createBiquadFilter();
-
-    rebuildGraph();
-    startBinauralBeats();
-    startVisualizer();
-    startSTT();
-
-    if (rhythmEnabled) startRhythm();
-
-    isRunning = true;
-    updateEngineUI(true);
-  } catch(e) {
-    alert('Microphone access required. ' + e.message);
-  }
-}
-
-function stopEngine() {
-  stopRhythm();
-  stopBinauralBeats();
-  if (audioCtx) { audioCtx.close(); audioCtx = null; }
-  cancelAnimationFrame(animFrameId);
-  stopSTT();
-  isRunning = false;
-  updateEngineUI(false);
-  drawIdleVisualizer();
-}
-
-function updateEngineUI(running) {
-  const btn   = document.getElementById('engine-btn');
-  const badge = document.getElementById('engine-badge');
-  const dot   = document.getElementById('badge-dot');
-  const blbl  = document.getElementById('badge-label');
-  const bicon = document.getElementById('engine-btn-icon');
-  const blab  = document.getElementById('engine-btn-label');
-  const hint  = document.getElementById('stt-hint');
-  const beatBar = document.getElementById('beat-bar');
-
-  if (running) {
-    btn.classList.add('running');
-    bicon.textContent = '⏹';
-    blab.textContent  = 'Stop Engine';
-    badge.classList.add('live');
-    blbl.textContent  = 'Engine Live';
-    if (hint) { hint.textContent = '🎙 Speech recognition active — spoken words will highlight in real time'; hint.classList.add('active'); }
-    if (beatBar && rhythmEnabled) beatBar.classList.add('visible');
-  } else {
-    btn.classList.remove('running');
-    bicon.textContent = '⚡';
-    blab.textContent  = 'Initialize Engine';
-    badge.classList.remove('live');
-    blbl.textContent  = 'Engine Offline';
-    if (hint) { hint.textContent = '💡 Start the audio engine to activate real-time speech word tracking'; hint.classList.remove('active'); }
-    if (beatBar) beatBar.classList.remove('visible');
-  }
-}
-
-function rebuildGraph() {
-  if (!audioCtx) return;
-  const sliderVal = parseFloat(document.getElementById('param-slider').value);
-
-  try { micSource.disconnect(); } catch(e){}
-  try { delayNode.disconnect(); } catch(e){}
-  try { biquadFilter.disconnect(); } catch(e){}
-
-  if (currentMode === 'daf') {
-    delayNode.delayTime.setValueAtTime(sliderVal / 1000, audioCtx.currentTime);
-    micSource.connect(delayNode);
-    delayNode.connect(audioCtx.destination);
-    micSource.connect(analyser);
-  }
-  else if (currentMode === 'faf') {
-    biquadFilter.type = 'peaking';
-    biquadFilter.frequency.setValueAtTime(sliderVal, audioCtx.currentTime);
-    biquadFilter.Q.setValueAtTime(15, audioCtx.currentTime);
-    biquadFilter.gain.setValueAtTime(18, audioCtx.currentTime);
-    micSource.connect(biquadFilter);
-    biquadFilter.connect(audioCtx.destination);
-    biquadFilter.connect(analyser);
-  }
-  else if (currentMode === 'binaural') {
-    const intensity = sliderVal / 100;
-    biquadFilter.type = 'lowpass';
-    biquadFilter.frequency.setValueAtTime(400 + intensity * 1200, audioCtx.currentTime);
-    biquadFilter.Q.setValueAtTime(0.5, audioCtx.currentTime);
-    micSource.connect(biquadFilter);
-    biquadFilter.connect(audioCtx.destination);
-    micSource.connect(analyser);
-  }
-  else {
-    micSource.connect(audioCtx.destination);
-    micSource.connect(analyser);
-  }
-}
-
-// ─── BINAURAL BEATS ───────────────────────────────────────────────────────
-// Two oscillators pitched 18 Hz apart (240 Hz left, 258 Hz right), mixed at
-// -30 dB under the main audio. The brain perceives the 18 Hz difference as
-// a beta-frequency beat, entraining the 20 Hz motor rhythm linked to fluency.
-function startBinauralBeats() {
-  if (!audioCtx) return;
-
-  try {
-    binauralMerger  = audioCtx.createChannelMerger(2);
-    binauralGainNode = audioCtx.createGain();
-    binauralGainNode.gain.value = 0.032; // ~-30 dB
-
-    leftOsc  = audioCtx.createOscillator();
-    rightOsc = audioCtx.createOscillator();
-
-    leftOsc.type  = 'sine';
-    rightOsc.type = 'sine';
-    leftOsc.frequency.value  = 240;
-    rightOsc.frequency.value = 258; // 18 Hz binaural difference
-
-    leftOsc.connect(binauralMerger, 0, 0);
-    rightOsc.connect(binauralMerger, 0, 1);
-    binauralMerger.connect(binauralGainNode);
-    binauralGainNode.connect(audioCtx.destination);
-
-    leftOsc.start();
-    rightOsc.start();
-
-    updateBinauralChip(true);
-  } catch(e) {
-    console.warn('Binaural beats unavailable:', e);
-  }
-}
-
-function stopBinauralBeats() {
-  try { leftOsc && leftOsc.stop(); } catch(e){}
-  try { rightOsc && rightOsc.stop(); } catch(e){}
-  try { binauralMerger && binauralMerger.disconnect(); } catch(e){}
-  try { binauralGainNode && binauralGainNode.disconnect(); } catch(e){}
-  leftOsc = rightOsc = binauralMerger = binauralGainNode = null;
-  updateBinauralChip(false);
-}
-
-function updateBinauralChip(active) {
-  const chip  = document.getElementById('binaural-chip');
-  const label = document.getElementById('binaural-chip-label');
-  if (!chip) return;
-  if (active) {
-    chip.classList.add('active');
-    label.textContent = 'Binaural 18Hz · Live';
-  } else {
-    chip.classList.remove('active');
-    label.textContent = 'Binaural 18Hz · Off';
-  }
-}
-
-// ─── RHYTHM ENGINE ────────────────────────────────────────────────────────
-function onRhythmToggle(enabled) {
-  rhythmEnabled = enabled;
-  if (isRunning) {
-    if (enabled) startRhythm();
-    else         stopRhythm();
-  }
-  const beatBar = document.getElementById('beat-bar');
-  if (beatBar) {
-    if (enabled && isRunning) beatBar.classList.add('visible');
-    else beatBar.classList.remove('visible');
-  }
-}
-
-function onBpmChange(v) {
-  rhythmBPM = parseInt(v);
-  document.getElementById('bpm-val').textContent = rhythmBPM + ' BPM';
-  const disp = document.getElementById('beat-bpm-display');
-  if (disp) disp.textContent = rhythmBPM + ' BPM';
-  if (rhythmEnabled && isRunning) restartRhythm();
-}
-
-function startRhythm() {
-  stopRhythm();
-  scheduleBeat();
-}
-
-function stopRhythm() {
-  clearTimeout(rhythmTimer);
-  rhythmTimer = null;
-}
-
-function restartRhythm() {
-  stopRhythm();
-  if (isRunning) scheduleBeat();
-}
-
-function scheduleBeat() {
-  if (!isRunning || !rhythmEnabled || !audioCtx) return;
-  triggerBeat();
-  const intervalMs = (60 / rhythmBPM) * 1000;
-  rhythmTimer = setTimeout(scheduleBeat, intervalMs);
-}
-
-function triggerBeat() {
-  if (!audioCtx) return;
-
-  // Audible click
-  const osc  = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  const now  = audioCtx.currentTime;
-  osc.type            = 'sine';
-  osc.frequency.value = isKidsMode ? 880 : 500;
-  gain.gain.setValueAtTime(0.12, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start(now);
-  osc.stop(now + 0.07);
-
-  // Visual flash
-  const ring = document.getElementById('beat-ring');
-  if (ring) {
-    ring.classList.add('on-beat');
-    setTimeout(() => ring.classList.remove('on-beat'), 120);
-  }
-}
-
-// ─── VISUALIZER ──────────────────────────────────────────────────────────
-function startVisualizer() {
-  const canvas = document.getElementById('visualizer');
-  const ctx    = canvas.getContext('2d');
-  const bufLen = analyser.frequencyBinCount;
-  const data   = new Uint8Array(bufLen);
-
-  function draw() {
-    animFrameId = requestAnimationFrame(draw);
-    canvas.width  = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    analyser.getByteFrequencyData(data);
-
-    ctx.fillStyle = isKidsMode ? '#fff5e0' : '#07090f';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    const bw = (canvas.width / bufLen) * 2.2;
-    let x = 0;
-    for (let i = 0; i < bufLen; i++) {
-      const h = (data[i] / 255) * canvas.height * 0.9;
-      const pct = i / bufLen;
-      if (isKidsMode) {
-        ctx.fillStyle = `rgb(255,${Math.round(107 + pct * 100)},${Math.round(53 + data[i] * 0.3)})`;
-      } else {
-        ctx.fillStyle = `rgba(${Math.round(82 + pct * 80)},${Math.round(196 - pct * 60)},255,${0.5 + (data[i]/255)*0.5})`;
-      }
-      ctx.fillRect(x, canvas.height - h, bw - 1, h);
-      x += bw;
-    }
-  }
-  draw();
-}
-
-function drawIdleVisualizer() {
-  const canvas = document.getElementById('visualizer');
-  const ctx    = canvas.getContext('2d');
-  canvas.width  = canvas.offsetWidth  || 300;
-  canvas.height = canvas.offsetHeight || 100;
-  ctx.fillStyle = isKidsMode ? '#fff5e0' : '#07090f';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = isKidsMode ? 'rgba(255,107,53,0.2)' : 'rgba(82,196,255,0.15)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(0, canvas.height / 2);
-  ctx.lineTo(canvas.width, canvas.height / 2);
-  ctx.stroke();
-}
-
-// ─── SPEECH RECOGNITION ──────────────────────────────────────────────────
-function startSTT() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    document.getElementById('transcript-display').innerHTML =
-      '<span style="color:var(--text-3);font-size:0.72rem;">Speech recognition not supported in this browser (use Chrome).</span>';
-    return;
-  }
-
-  recognition = new SpeechRecognition();
-  recognition.continuous     = true;
-  recognition.interimResults = true;
-  recognition.lang           = 'en-US';
-  recognitionBuffer          = '';
-
-  recognition.onresult = (event) => {
-    let interim = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        recognitionBuffer += transcript + ' ';
-        highlightWords(recognitionBuffer);
-      } else {
-        interim = transcript;
-      }
-    }
-    const disp = document.getElementById('transcript-display');
-    if (disp) disp.innerHTML = `<span style="color:var(${isKidsMode?'--k-text-2':'--text-2'})">${recognitionBuffer}</span><span style="color:var(${isKidsMode?'--k-text-3':'--text-3'})">${interim}</span>`;
-  };
-
-  recognition.onerror = (e) => {
-    if (e.error !== 'no-speech') {
-      const disp = document.getElementById('transcript-display');
-      if (disp) disp.innerHTML = `<span style="color:var(--danger);font-size:0.72rem;">Recognition error: ${e.error}</span>`;
-    }
-  };
-
-  recognition.onend = () => {
-    if (isRunning) recognition.start();
-  };
-
-  recognition.start();
-  isRecognizing = true;
-}
-
-function stopSTT() {
-  if (recognition) { recognition.stop(); recognition = null; }
-  isRecognizing = false;
-  const disp = document.getElementById('transcript-display');
-  if (disp) disp.innerHTML = '<span style="color:var(--text-3);font-size:0.72rem;">Awaiting engine start…</span>';
-  recognitionBuffer = '';
-}
-
-function highlightWords(spokenText) {
-  const words = document.querySelectorAll('#prompt-text .stt-word');
-  if (!words.length) return;
-  const spoken = spokenText.toLowerCase().replace(/[^a-z\s']/g,'').split(/\s+/);
-  words.forEach(span => {
-    const w = span.dataset.word;
-    if (w && spoken.includes(w)) span.classList.add('spoken');
-  });
-}
-
-function resetSTTHighlight() {
-  recognitionBuffer = '';
-  document.querySelectorAll('#prompt-text .stt-word').forEach(s => {
-    s.classList.remove('spoken', 'flagged');
-  });
-  const disp = document.getElementById('transcript-display');
-  if (disp) disp.innerHTML = '<span style="color:var(--text-3);font-size:0.72rem;">Reset — speak again to re-track…</span>';
-}
-
-// ─── FLUENCY SCORE ────────────────────────────────────────────────────────
-function calcFluencyScore() {
-  const all     = document.querySelectorAll('#prompt-text .stt-word');
-  const spoken  = document.querySelectorAll('#prompt-text .stt-word.spoken');
-  if (!all.length) return { pct: 0, total: 0, covered: 0 };
-  // Filter out words shorter than 2 chars (articles/punctuation fragments)
-  const meaningful = Array.from(all).filter(w => w.dataset.word && w.dataset.word.length > 1);
-  const coveredCount = Array.from(spoken).filter(w => w.dataset.word && w.dataset.word.length > 1).length;
-  const pct = meaningful.length ? Math.round((coveredCount / meaningful.length) * 100) : 0;
-  return { pct, total: meaningful.length, covered: coveredCount };
-}
-
-function scoreDescription(pct) {
-  if (pct >= 90) return isKidsMode ? '🏆 Amazing! You said almost every word!' : 'Excellent coverage — full prompt completion.';
-  if (pct >= 70) return isKidsMode ? '⭐ Great job, explorer!'                  : 'Strong session. Consistent engagement with the prompt.';
-  if (pct >= 50) return isKidsMode ? '💪 Good effort! Keep practising!'          : 'Solid start. Keep building consistency each session.';
-  if (pct >= 20) return isKidsMode ? '🌱 You\'re just getting started!'           : 'Early progress. Focus on prompt completion next session.';
-  return isKidsMode ? '🎙️ Try speaking the prompt aloud next time!'             : 'Start the engine and read the prompt aloud to track coverage.';
-}
-
-// ─── MODE TOGGLE ─────────────────────────────────────────────────────────
-function toggleMode() {
-  isKidsMode = !isKidsMode;
-  document.body.classList.toggle('kids-mode', isKidsMode);
-
-  document.getElementById('mode-btn-label').textContent = isKidsMode ? 'Adult Mode' : 'Kids Mode';
-  document.getElementById('mode-btn-icon').textContent  = isKidsMode ? '👔' : '🎨';
-  document.getElementById('logo-mark').textContent      = isKidsMode ? '⭐' : '🌊';
-
-  applyProtocolUI();
-  activeDay = null;
-  renderCurriculum();
-  drawIdleVisualizer();
-
-  const panel = document.getElementById('prompt-panel');
-  panel.innerHTML = `
-    <div class="empty-state">
-      <div class="empty-icon">${isKidsMode ? '🌟' : '🎙️'}</div>
-      <div style="font-weight:700; font-size:1rem;">${isKidsMode ? 'Pick your adventure, Explorer!' : 'Select a session to begin'}</div>
-      <div>${isKidsMode ? 'Choose a day from the 30-day Kids Journey on the left!' : 'Choose any day from the 30-day program in the sidebar.'}</div>
-    </div>`;
-
-  if (isRunning) rebuildGraph();
-}
-
-// ─── COMPLETION ──────────────────────────────────────────────────────────
-function markComplete(dayNum) {
-  completedDays.add(dayNum);
-  renderCurriculum();
-
-  if (isKidsMode) {
-    kidsXP = Math.min(kidsXP + 1, 10);
-    updateXPBar();
-    if (kidsXP % 2 === 0) earnStar();
-  }
-
-  const overlay = document.getElementById('complete-flash');
-  const icon    = document.getElementById('complete-icon');
-  const title   = document.getElementById('complete-title');
-  const sub     = document.getElementById('complete-sub');
-  const scoreBar  = document.getElementById('score-bar');
-  const scoreNum  = document.getElementById('score-number');
-  const scoreDesc = document.getElementById('score-desc');
-
-  const { pct, total, covered } = calcFluencyScore();
-
-  // Reset bar first (for animation)
-  scoreBar.style.width = '0%';
-  scoreNum.textContent = '—';
-
-  if (isKidsMode) {
-    icon.textContent  = ['🌟','⭐','🏆','🎉','🦊','🚀','✨','🎊'][Math.floor(Math.random()*8)];
-    title.textContent = 'Amazing Explorer!';
-    sub.textContent   = `Day ${dayNum} complete! You earned XP! Keep going!`;
-  } else {
-    icon.textContent  = '✅';
-    title.textContent = 'Session Complete';
-    sub.textContent   = `Day ${dayNum} logged. Consistent practice compounds.`;
-  }
-
-  overlay.classList.add('show');
-
-  // Animate score after overlay is visible
-  setTimeout(() => {
-    scoreBar.style.width  = pct + '%';
-    scoreNum.textContent  = pct + '%';
-    scoreDesc.textContent = scoreDescription(pct);
-    if (total > 0) {
-      scoreDesc.textContent += ` (${covered}/${total} words)`;
-    }
-  }, 300);
-}
-
-function closeComplete() {
-  document.getElementById('complete-flash').classList.remove('show');
-}
-
-// ─── KIDS XP ─────────────────────────────────────────────────────────────
-function buildStarRow() {
-  const row = document.getElementById('star-row');
-  row.innerHTML = '';
-  for (let i = 0; i < 10; i++) {
-    const s = document.createElement('span');
-    s.className = 'star';
-    s.textContent = '⭐';
-    s.id = `star-${i}`;
-    row.appendChild(s);
-  }
-}
-
-function updateXPBar() {
-  document.getElementById('xp-fill').style.width = `${kidsXP * 10}%`;
-  document.getElementById('xp-label-val').textContent = `${kidsXP} / 10 pts`;
-}
-
-function earnStar() {
-  const star = document.getElementById(`star-${kidsStars}`);
-  if (star) { star.classList.add('earned'); kidsStars++; }
-}
-
-// ─── JOURNAL ─────────────────────────────────────────────────────────────
-function openJournal() {
-  const modal = document.getElementById('journal-modal');
-  const dateEl = document.getElementById('journal-date');
-  dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-  document.getElementById('journal-situation').value = '';
-  document.getElementById('journal-carry').value     = '';
-  document.getElementById('journal-saved-badge').classList.remove('show');
-
-  loadJournalHistory();
-  modal.classList.add('show');
-}
-
-function closeJournal() {
-  document.getElementById('journal-modal').classList.remove('show');
-}
-
-function saveJournalEntry() {
-  const situation = document.getElementById('journal-situation').value.trim();
-  const carry     = document.getElementById('journal-carry').value.trim();
-  if (!situation && !carry) return;
-
-  const entries = JSON.parse(localStorage.getItem('fs_journal') || '[]');
-  entries.unshift({
-    date: new Date().toISOString(),
-    situation,
-    carry
-  });
-  // Keep last 60 entries
-  localStorage.setItem('fs_journal', JSON.stringify(entries.slice(0, 60)));
-
-  document.getElementById('journal-saved-badge').classList.add('show');
-  loadJournalHistory();
-}
-
-function loadJournalHistory() {
-  const entries = JSON.parse(localStorage.getItem('fs_journal') || '[]');
-  const wrap    = document.getElementById('journal-history-wrap');
-  const hist    = document.getElementById('journal-history');
-  if (!wrap || !hist) return;
-
-  if (!entries.length) { wrap.style.display = 'none'; return; }
-  wrap.style.display = 'block';
-  hist.innerHTML = entries.slice(0, 10).map(e => `
-    <div class="journal-entry">
-      <div class="journal-entry-date">${new Date(e.date).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>
-      ${e.situation ? `<div>${e.situation}</div>` : ''}
-      ${e.carry ? `<div style="margin-top:0.3rem;opacity:0.75;font-style:italic;">${e.carry}</div>` : ''}
-    </div>
-  `).join('');
-}
-
-// ─── RESIZE VISUALIZER ───────────────────────────────────────────────────
-window.addEventListener('resize', () => { if (!isRunning) drawIdleVisualizer(); });
-</script>
+<script type="module" src="main.js"></script>
 </body>
 </html>
