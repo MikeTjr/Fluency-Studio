@@ -1,5 +1,5 @@
 # Current State — Fluency Studio
-## Version 2.2.0 — Stability + Immersion + Advanced Rendering
+## Version 2.3.0 — Pre-Conversation Launch Protocol
 
 ---
 
@@ -35,8 +35,9 @@ src/
   curriculum.js     — Adult and kids curriculum data (30 days each)
   audio.js          — AudioEngine class (DAF/FAF/binaural/bypass/STT/rhythm)
   ui.js             — UIManager class (all DOM manipulation)
+  launch.js         — LaunchProtocol class (Pre-Conversation Activation)
   rendering/
-    harmonic-field.js  — HarmonicFieldRenderer (wave superposition simulation)
+    harmonic-field.js  — HarmonicFieldRenderer (wave superposition + mood system)
     visualizer.js      — NeuralBridgeVisualizer (oscilloscope display)
 docs/
   current-state.md
@@ -53,6 +54,7 @@ docs/
 - **ui.js**: UIManager class. Listens to AppState events and drives DOM. Manages: curriculum rendering, prompt panel, session complete modal, fluency score, journal, mode toggle, XP bar (kids), binaural chip, beat ring.
 - **rendering/harmonic-field.js**: HarmonicFieldRenderer. Background canvas at z-index 0. Procedural wave interference simulation. Two primary hemisphere wave sources with phase that converges from π→0 as user practices (sync metaphor). Reacts to audio amplitude and beat events.
 - **rendering/visualizer.js**: NeuralBridgeVisualizer. Sidebar oscilloscope replacing the old bar chart. Dual-channel time-domain display (blue = mic, purple = reference). Shows coherence %, RMS energy bar, idle animation.
+- **launch.js**: LaunchProtocol class. 75-second pre-conversation activation ritual. Six situation configs. Three-phase timer engine. Phase-specific binaural audio (8/14/18 Hz). Emits AppState events that drive HarmonicField mood transitions. Own Web Audio context (independent of main AudioEngine). Renders selector, protocol, and complete screens dynamically into #launch-body.
 - **main.js**: Boot sequence. Initializes all modules in order. Exposes `window.*` global functions for HTML onclick compatibility.
 
 ---
@@ -69,8 +71,24 @@ docs/
 - Speech Recognition (STT): continuous Web Speech API with word highlighting
 - RMS Polling: per-frame amplitude measurement emitted to rendering systems
 
+### Pre-Conversation Launch Protocol
+- Six speaking situations: Phone Call, Saying My Name, Meeting/Talk, Ordering/Buying, Video Call, Casual Chat
+- Each situation has: fear-level indicator (1–5 dots), optimal BPM, binaural Hz target, situation-specific prime phrase, clinical evidence text
+- Three phases × 25 seconds = 75s total:
+  - **Ground (0–25s)**: 8 Hz alpha-theta binaural — reduce anticipatory anxiety and cortisol
+  - **Warm (25–50s)**: 14 Hz low-beta binaural — activate vocal readiness, hum on exhale
+  - **Prime (50–75s)**: 18 Hz beta binaural + situation phrase — anchor fluency pre-speaking
+- SVG countdown ring (r=40, circumference=251.3) with per-phase color (blue/purple/cyan)
+- Phase dots track progress (grey → active glow → done green)
+- Evidence panel shows situation-specific clinical rationale throughout
+- Completion screen: animated star burst, "You're Primed" heading, prime phrase displayed, "Go Speak →" button
+- Binaural frequency slides smoothly (2.5s linear ramp) between phases — no clicks or pops
+- Field mood drives HarmonicFieldRenderer via AppState events: ground/warm/prime/burst/normal
+- Own AudioContext (avoids conflict with main AudioEngine)
+- Clinical basis: Huang & Charyton (2008), Menzies et al. (2008), Yaruss & Quesal (2004), Guitar (2006), Kalinowski et al. (2000)
+
 ### Visual Rendering
-- **Harmonic Interference Field**: Full-screen background canvas. 6-source wave superposition using `f(x,y,t) = Σ Aᵢ·sin(k·rᵢ − ω·t + φᵢ) / (1 + λ·rᵢ)`. Rendered at 1/4 resolution (1/6 on mobile) scaled up for soft-field look. Color: deep navy → teal → cyan → purple → white-lavender. Kids mode: warm amber → golden → bright peach.
+- **Harmonic Interference Field**: Full-screen background canvas. 6-source wave superposition using `f(x,y,t) = Σ Aᵢ·sin(k·rᵢ − ω·t + φᵢ) / (1 + λ·rᵢ)`. Rendered at 1/4 resolution (1/6 on mobile) scaled up for soft-field look. Color: deep navy → teal → cyan → purple → white-lavender. Kids mode: warm amber → golden → bright peach. **Mood system**: LaunchProtocol phases drive smooth animated transitions in omega (temporal frequency), ampMoodMod (amplitude contribution), and kWave (spatial frequency) — all lerped each frame for fluid visual response.
 - **Phase Sync Metaphor**: Sources[0] (left hemisphere) at phase 0. Sources[1] (right hemisphere) phase = π × (1 − syncProgress). As user speaks, syncProgress accumulates toward 1.0, causing wave patterns to shift from destructive to constructive interference (chaotic → coherent visual field).
 - **Audio Reactivity**: Amplitude from mic boosts field brightness and source strengths each frame. Beat events trigger a 1.0 → 0 flash decaying at 2.8/sec.
 - **Neural Bridge Oscilloscope**: Dual-channel waveform display. Channel A (blue): live mic time-domain waveform. Channel B (purple dashed): reference sine at BPM frequency. Center line, grid, RMS energy bar, sync% counter, idle animation showing two drifting waves.

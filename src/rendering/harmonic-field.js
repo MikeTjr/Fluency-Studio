@@ -32,6 +32,12 @@ class HarmonicFieldRenderer {
     this._kDamp = 5.5;     // amplitude decay with distance
     this._omega = 0.38;    // temporal angular frequency (BPM-influenced)
 
+    // Mood system — interpolated targets set by LaunchProtocol phases
+    this._targetOmega  = 0.38;
+    this._moodKWave    = 11;
+    this._ampMoodMod   = 1.0;  // multiplier on audio amplitude contribution
+    this._targetAmpMod = 1.0;
+
     // Two primary sources = left/right hemisphere metaphor
     // Additional ambient sources add depth and organic complexity
     this._sources = [
@@ -65,7 +71,24 @@ class HarmonicFieldRenderer {
     // Listen to AppState events
     AppState.on('beat', () => { this._beatFlash = 1.0; });
     AppState.on('bpmChange', bpm => {
-      this._omega = 0.20 + (bpm / 60) * 0.18;
+      // Only update targetOmega from BPM when not in a launch mood
+      if (!this._launchMoodActive) {
+        this._targetOmega = 0.20 + (bpm / 60) * 0.18;
+      }
+    });
+    AppState.on('launchPhase', ({ phaseIdx, mood }) => {
+      this._launchMoodActive = true;
+      this.setMood(mood);
+    });
+    AppState.on('launchAbort', () => {
+      this._launchMoodActive = false;
+      this.setMood('normal');
+    });
+    AppState.on('launchComplete', () => {
+      setTimeout(() => {
+        this._launchMoodActive = false;
+        this.setMood('normal');
+      }, 2000);
     });
 
     this._render(0);
@@ -78,6 +101,10 @@ class HarmonicFieldRenderer {
 
     const dt = Math.min((ts - this._lastFrameTime) / 1000, 0.05); // cap at 50ms
     this._lastFrameTime = ts;
+
+    // Smoothly lerp omega and ampMoodMod toward their targets
+    this._omega      = LERP(this._omega,      this._targetOmega,  dt * 0.8);
+    this._ampMoodMod = LERP(this._ampMoodMod, this._targetAmpMod, dt * 0.6);
 
     // Time advance
     this._t += dt * this._omega;
@@ -92,8 +119,9 @@ class HarmonicFieldRenderer {
     // Drift source positions slowly for organic feel
     this._updateDrift(this._t);
 
-    // Audio amplitude
-    const amp = CLAMP((AppState.lastAmplitude || 0) * 1.4 + this._beatFlash * 0.5, 0, 1.2);
+    // Audio amplitude (scaled by mood modifier)
+    const rawAmp = (AppState.lastAmplitude || 0) * 1.4 * this._ampMoodMod;
+    const amp = CLAMP(rawAmp + this._beatFlash * 0.5, 0, 1.2);
 
     // Compute interference field at low resolution
     this._computeField(amp);
@@ -101,6 +129,44 @@ class HarmonicFieldRenderer {
     // Scale up to canvas
     this._offCtx.putImageData(this._imageData, 0, 0);
     this._ctx.drawImage(this._offscreen, 0, 0, this._canvas.width, this._canvas.height);
+  }
+
+  // ── Mood control (used by LaunchProtocol phases) ─────────────────────────
+
+  setMood(mood) {
+    switch (mood) {
+      case 'ground':
+        // Slow, dark, calming — alpha binaural phase
+        this._targetOmega  = 0.09;
+        this._targetAmpMod = 0.4;
+        this._moodKWave    = 7;
+        break;
+      case 'warm':
+        // Medium, brightening — low-beta vocal warm-up phase
+        this._targetOmega  = 0.22;
+        this._targetAmpMod = 0.75;
+        this._moodKWave    = 10;
+        break;
+      case 'prime':
+        // Full energy — beta activation, situation priming phase
+        this._targetOmega  = 0.50;
+        this._targetAmpMod = 1.3;
+        this._moodKWave    = 13;
+        break;
+      case 'burst':
+        // Completion flash — then auto-holds at prime
+        this._beatFlash    = 2.5;
+        this._targetOmega  = 0.55;
+        this._targetAmpMod = 1.5;
+        this._moodKWave    = 13;
+        break;
+      case 'normal':
+      default:
+        this._targetOmega  = 0.38;
+        this._targetAmpMod = 1.0;
+        this._moodKWave    = 11;
+        break;
+    }
   }
 
   // ── Field computation ───────────────────────────────────────────────────
@@ -111,7 +177,7 @@ class HarmonicFieldRenderer {
     const data = this._imageData.data;
     const src = this._sources;
     const pos = this._positions;
-    const k = this._kWave;
+    const k = this._moodKWave;
     const lam = this._kDamp;
     const t = this._t;
     const nSrc = src.length;

@@ -1116,6 +1116,263 @@
       margin-bottom: 0.35rem;
     }
     body.kids-mode .journal-entry-date { font-family: var(--font-kids); color: var(--k-text-3); }
+
+    /* ─── LAUNCH BUTTON (header) ─────────────────────────────────────── */
+    .launch-btn {
+      display: flex; align-items: center; gap: 0.45rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, rgba(82,196,255,0.15) 0%, rgba(167,139,250,0.15) 100%);
+      border: 1px solid rgba(82,196,255,0.35);
+      border-radius: 20px;
+      color: var(--accent); font-family: var(--font-ui); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      transition: all var(--speed) var(--ease);
+      letter-spacing: 0.02em;
+    }
+    .launch-btn:hover {
+      background: linear-gradient(135deg, rgba(82,196,255,0.28) 0%, rgba(167,139,250,0.25) 100%);
+      border-color: var(--accent); box-shadow: 0 0 18px rgba(82,196,255,0.2);
+      transform: translateY(-1px);
+    }
+    .launch-btn-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+    body.kids-mode .launch-btn {
+      background: linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(255,186,8,0.15) 100%);
+      border-color: rgba(255,107,53,0.35); color: var(--k-accent);
+    }
+    body.kids-mode .launch-btn-dot { background: var(--k-accent); box-shadow: 0 0 6px var(--k-accent); }
+
+    /* ─── LAUNCH OVERLAY ─────────────────────────────────────────────── */
+    .launch-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(7,9,15,0.88);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s var(--ease);
+    }
+    .launch-overlay.active { opacity: 1; pointer-events: all; }
+
+    .launch-card {
+      background: var(--surface);
+      border: 1px solid var(--border-glow);
+      border-radius: 24px;
+      width: min(640px, 96vw);
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 0 60px rgba(82,196,255,0.08), 0 30px 80px rgba(0,0,0,0.6);
+    }
+    .launch-card-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: 1px solid var(--border);
+      border-radius: 50%; width: 32px; height: 32px;
+      color: var(--text-2); cursor: pointer; font-size: 0.85rem;
+      transition: all var(--speed) var(--ease);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .launch-card-close:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* Selector screen */
+    .launch-selector { display: flex; flex-direction: column; gap: 1.5rem; }
+    .launch-header-block { text-align: center; }
+    .launch-title {
+      font-size: 1.6rem; font-weight: 700; line-height: 1.2;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.6rem;
+    }
+    .launch-subtitle {
+      font-size: 0.85rem; color: var(--text-2); line-height: 1.6; max-width: 480px; margin: 0 auto;
+    }
+    .launch-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;
+    }
+    @media (max-width: 520px) { .launch-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .situation-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 0.75rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      cursor: pointer; transition: all var(--speed) var(--ease);
+      color: var(--text);
+    }
+    .situation-card:hover {
+      border-color: var(--accent); background: var(--surface-3);
+      box-shadow: 0 0 16px rgba(82,196,255,0.12);
+      transform: translateY(-2px);
+    }
+    .sit-icon { font-size: 1.6rem; }
+    .situation-card .sit-label { font-size: 0.75rem; font-weight: 600; text-align: center; line-height: 1.3; }
+    .sit-fear { display: flex; gap: 3px; margin-top: 0.1rem; }
+    .fear-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--surface-3); border: 1px solid var(--border);
+      transition: all var(--speed);
+    }
+    .fear-dot.active { background: var(--accent-2); border-color: var(--accent-2); }
+    .launch-clinical-note {
+      font-size: 0.7rem; color: var(--text-3); font-family: var(--font-mono);
+      text-align: center; padding: 0.75rem; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); line-height: 1.5;
+    }
+
+    /* Protocol screen */
+    .launch-protocol { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+    .launch-sit-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 1rem; font-weight: 600; color: var(--text);
+    }
+    .sit-icon-lg { font-size: 1.8rem; }
+    .sit-label-lg { font-size: 1.1rem; font-weight: 600; }
+
+    .phase-dots {
+      display: flex; gap: 1.5rem; align-items: center;
+    }
+    .phase-dot {
+      display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+      cursor: default;
+    }
+    .phase-dot::before {
+      content: ''; display: block;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--surface-3); border: 2px solid var(--border);
+      transition: all 0.4s var(--ease);
+    }
+    .phase-dot span {
+      font-size: 0.6rem; font-family: var(--font-mono); color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      transition: color 0.4s;
+    }
+    .phase-dot.active::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
+    .phase-dot.active span   { color: var(--accent); }
+    .phase-dot.done::before  { background: var(--accent-3); border-color: var(--accent-3); }
+    .phase-dot.done span     { color: var(--accent-3); }
+
+    /* SVG timer ring */
+    .launch-timer-wrap {
+      position: relative; display: inline-flex;
+      align-items: center; justify-content: center;
+    }
+    .timer-ring { display: block; }
+    .timer-track {
+      fill: none; stroke: var(--surface-3); stroke-width: 4;
+    }
+    .timer-arc {
+      fill: none; stroke: var(--accent); stroke-width: 4;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.15s linear, stroke 0.6s var(--ease);
+    }
+    .timer-center {
+      position: absolute; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .timer-phase-name {
+      font-size: 0.58rem; font-family: var(--font-mono); letter-spacing: 0.12em;
+      color: var(--text-2); text-transform: uppercase;
+    }
+    .timer-secs {
+      font-size: 2rem; font-weight: 700; line-height: 1;
+      font-family: var(--font-mono); color: var(--text);
+    }
+    .timer-unit { font-size: 0.6rem; color: var(--text-3); font-family: var(--font-mono); }
+
+    .phase-instruction {
+      font-size: 0.88rem; color: var(--text-2); text-align: center;
+      max-width: 400px; line-height: 1.7;
+      transition: opacity 0.4s;
+    }
+    .phase-phrase {
+      font-size: 1.05rem; font-weight: 600; color: var(--accent);
+      text-align: center; max-width: 420px; line-height: 1.5;
+      padding: 0.9rem 1.2rem;
+      background: rgba(82,196,255,0.06); border: 1px solid rgba(82,196,255,0.2);
+      border-radius: var(--radius); letter-spacing: 0.01em;
+      transition: opacity 0.6s var(--ease);
+      font-style: italic;
+    }
+    .phase-evidence {
+      font-size: 0.68rem; color: var(--text-3); font-family: var(--font-mono);
+      text-align: center; max-width: 400px; line-height: 1.6;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+    }
+    .launch-abort-btn {
+      background: none; border: 1px solid var(--border); border-radius: 20px;
+      color: var(--text-3); font-size: 0.75rem; padding: 0.4rem 1rem;
+      cursor: pointer; transition: all var(--speed) var(--ease);
+    }
+    .launch-abort-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* Complete screen */
+    .launch-complete {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 1rem; padding: 1rem 0; text-align: center;
+      position: relative;
+    }
+    .launch-complete-glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(82,196,255,0.12) 0%, transparent 70%);
+      animation: launchBurst 2s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes launchBurst {
+      0%   { transform: translate(-50%,-50%) scale(0.3); opacity: 1; }
+      60%  { transform: translate(-50%,-50%) scale(1.4); opacity: 0.6; }
+      100% { transform: translate(-50%,-50%) scale(2);   opacity: 0; }
+    }
+    .launch-complete-symbol {
+      font-size: 2.5rem; color: var(--accent);
+      text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent);
+      animation: spinIn 0.6s var(--ease) both;
+    }
+    @keyframes spinIn {
+      from { transform: scale(0) rotate(-180deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg);    opacity: 1; }
+    }
+    .launch-complete-title {
+      font-size: 1.8rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .launch-complete-body {
+      font-size: 0.88rem; color: var(--text-2); line-height: 1.7; max-width: 360px;
+    }
+    .launch-complete-phrase {
+      font-size: 1rem; font-weight: 600; color: var(--accent);
+      font-style: italic; padding: 0.8rem 1.2rem;
+      background: rgba(82,196,255,0.06); border: 1px solid rgba(82,196,255,0.2);
+      border-radius: var(--radius);
+    }
+    .launch-go-btn {
+      padding: 0.85rem 2.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border: none; border-radius: 25px;
+      color: #0a0f1a; font-family: var(--font-ui); font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.04em;
+      transition: all var(--speed) var(--ease);
+      box-shadow: 0 0 24px rgba(82,196,255,0.3);
+    }
+    .launch-go-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 0 36px rgba(82,196,255,0.45); }
+
+    /* Kids mode overrides */
+    body.kids-mode .launch-card { background: var(--k-surface); border-color: var(--k-border); }
+    body.kids-mode .situation-card { background: var(--k-surface-2); border-color: var(--k-border); color: var(--k-text); }
+    body.kids-mode .situation-card:hover { border-color: var(--k-accent); }
+    body.kids-mode .fear-dot.active { background: var(--k-accent-2); border-color: var(--k-accent-2); }
+    body.kids-mode .phase-dot.active::before { background: var(--k-accent); border-color: var(--k-accent); }
+    body.kids-mode .timer-arc { stroke: var(--k-accent); }
+    body.kids-mode .phase-phrase { color: var(--k-accent); background: rgba(255,107,53,0.06); border-color: rgba(255,107,53,0.2); }
+    body.kids-mode .launch-complete-phrase { color: var(--k-accent); background: rgba(255,107,53,0.06); border-color: rgba(255,107,53,0.2); }
+    body.kids-mode .launch-go-btn { background: linear-gradient(135deg, var(--k-accent), var(--k-accent-2)); color: white; }
   </style>
 </head>
 <body>
@@ -1132,13 +1389,17 @@
       <div>
         <div class="logo-text">Fluency <span>Studio</span></div>
       </div>
-      <div class="version-tag" id="version-tag">v2.1.0</div>
+      <div class="version-tag" id="version-tag">v2.3.0</div>
     </div>
     <div class="header-right">
       <div class="engine-badge" id="engine-badge">
         <div class="dot" id="badge-dot"></div>
         <span id="badge-label">Engine Offline</span>
       </div>
+      <button class="launch-btn" onclick="window.openLaunch()" title="Pre-Conversation Activation — prime your fluency before speaking">
+        <span class="launch-btn-dot"></span>
+        Launch Mode
+      </button>
       <button class="header-icon-btn" title="Fluency Journal" onclick="openJournal()">📓</button>
       <button class="mode-btn" id="mode-btn" onclick="toggleMode()">
         <span id="mode-btn-icon">🎨</span>
@@ -1302,6 +1563,14 @@
       <div class="fluency-score-desc" id="score-desc"></div>
     </div>
     <button class="complete-close" onclick="closeComplete()">Continue</button>
+  </div>
+</div>
+
+<!-- Launch Protocol overlay -->
+<div class="launch-overlay" id="launch-overlay">
+  <div class="launch-card">
+    <button class="launch-card-close" onclick="window.closeLaunch()" title="Close">✕</button>
+    <div id="launch-body"></div>
   </div>
 </div>
 

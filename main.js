@@ -1,4 +1,4 @@
-// ─── FLUENCY STUDIO — v2.2.0 Entry Point ─────────────────────────────────
+// ─── FLUENCY STUDIO — v2.3.0 Entry Point ─────────────────────────────────
 // Imports all modules, initializes in correct order, and exposes global
 // callback functions for HTML onclick handlers (legacy compat layer).
 
@@ -8,6 +8,7 @@ import { audioEngine }    from './src/audio.js';
 import { harmonicField }  from './src/rendering/harmonic-field.js';
 import { neuralViz }      from './src/rendering/visualizer.js';
 import { uiManager }      from './src/ui.js';
+import { launchProtocol } from './src/launch.js';
 
 // ── Boot sequence ──────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -19,20 +20,23 @@ window.addEventListener('DOMContentLoaded', () => {
   // 2. Initialize UI (loads state, renders curriculum, wires AppState events)
   uiManager.init({ adultCurriculum, kidsCurriculum });
 
-  // 3. Wire audio → rendering bridges
+  // 3. Initialize launch protocol (wires DOM events on overlay)
+  launchProtocol.init();
+
+  // 4. Wire audio → rendering bridges
   AppState.on('amplitude', rms => {
     // HarmonicField reads AppState.lastAmplitude directly in its loop.
     // This is just for any future direct subscribers.
   });
 
-  // 4. Restore active day view if one was saved
+  // 5. Restore active day view if one was saved
   if (AppState.activeDay !== null) {
     const curr = AppState.isKidsMode ? kidsCurriculum : adultCurriculum;
     const item = curr[AppState.activeDay];
     if (item) uiManager.selectDay(AppState.activeDay);
   }
 
-  // 5. Mobile: detect landscape and add class
+  // 6. Mobile: detect landscape and add class
   const updateOrientation = () => {
     const isLandscapeMobile = window.innerHeight < 500 && window.innerWidth > window.innerHeight;
     document.body.classList.toggle('landscape-mobile', isLandscapeMobile);
@@ -69,3 +73,8 @@ window.confirmHeadphones = () => uiManager.confirmHeadphones();
 window.scaffoldInfo   = ()    => uiManager.scaffoldInfo();
 window.resetSTTHighlight = () => audioEngine.resetSTTHighlight();
 window.toggleSidebar  = ()    => uiManager.toggleSidebar();
+
+// ── Launch Protocol globals ────────────────────────────────────────────────
+window.openLaunch      = ()    => launchProtocol.openOverlay();
+window.closeLaunch     = ()    => launchProtocol.closeOverlay();
+window.launchSituation = (id)  => launchProtocol.startSituation(id);
